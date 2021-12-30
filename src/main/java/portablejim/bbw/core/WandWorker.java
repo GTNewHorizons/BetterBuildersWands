@@ -203,16 +203,9 @@ public class WandWorker {
                 blockPlaceSuccess = world.copyBlock(originalBlock, blockPos);
             }
 
-            if(blockPlaceSuccess) {
-                Item itemFromBlock = Item.getItemFromBlock(world.getBlock(originalBlock));
-                world.playPlaceAtBlock(blockPos, world.getBlock(originalBlock));
-                /*if(sourceItems.getItem() instanceof ItemBlock) {
-                    ItemBlock itemBlock = (ItemBlock) sourceItems.getItem();
-                    itemBlock.placeBlockAt(sourceItems, player.getPlayer(), world.getWorld(), blockPos.x, blockPos.y, blockPos.z, side, hitX, hitY, hitZ, sourceItems.getItemDamage());
-                }
-                else {
-                    world.playPlaceAtBlock(blockPos, world.getBlock(originalBlock));
-                }*/
+            if (blockPlaceSuccess) {
+                Block block = world.getBlock(originalBlock);
+                world.playPlaceAtBlock(blockPos, block);
                 placedBlocks.add(blockPos);
                 if (!player.isCreative()) {
                     wand.placeBlock(wandItem, player.getPlayer());
@@ -222,6 +215,9 @@ public class WandWorker {
                     FMLLog.info("BBW takeback: %s", blockPos.toString());
                     world.setBlockToAir(blockPos);
                     placedBlocks.remove(placedBlocks.size() - 1);
+                }
+                else {
+                    block.onBlockPlacedBy(world.getWorld(), blockPos.x, blockPos.y, blockPos.z, player.getPlayer(), sourceItems);
                 }
             }
         }

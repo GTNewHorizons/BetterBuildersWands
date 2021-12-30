@@ -1,0 +1,12 @@
+.gradle
+.settings
+/.idea/
+/run/
+/build/
+/eclipse/
+.classpath
+.project
+/bin/
+/config/
+/crash-reports/
+/logs/
