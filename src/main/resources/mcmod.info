@@ -1,7 +1,7 @@
 [
 {
-  "modid": "betterbuilderswands",
-  "name": "Better Builder's Wands",
+  "modid": "${modId}",
+  "name": "${modName}",
   "description": "Wands that allow placing of multiple blocks at a time",
   "version": "${modVersion}",
   "mcversion": "${minecraftVersion}",
