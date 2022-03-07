@@ -25,8 +25,8 @@ bbw.chat.mode.horizontal=Режим: Горизонталь (колонна вл
 bbw.chat.mode.vertical= Режим: Вертикаль (колонна вверх и вниз) 
 bbw.chat.mode.nolock=Режим: Отсутствует (в любом направлении)
 
-bbw.hover.fluidmode.stopat=Жидкость: Остановка
-bbw.chat.fluidmode.stopat=Жидкость: Остановка - Остановка при любой жидкости и любого вида
+bbw.hover.fluidmode.stopat=Жидкость: Ограничение
+bbw.chat.fluidmode.stopat=Жидкость: Ограничение - Не строить при любой жидкости и любого вида
 
 bbw.hover.fluidmode.ignore=Жидкость: Игнорирование
 bbw.chat.fluidmode.ignore=Жидкость: Игнорирование - Строить при любой жидкости и любого вида
