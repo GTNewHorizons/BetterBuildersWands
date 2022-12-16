@@ -81,9 +81,8 @@ public class BetterBuildersWandsMod {
 
         itemStoneWand = new ItemRestrictedWandBasic(new RestrictedWand(5));
         itemIronWand = new ItemRestrictedWandAdvanced(new RestrictedWand(9));
-        itemDiamondWand = new ItemUnrestrictedWand(
-                new RestrictedWand(Item.ToolMaterial.EMERALD.getMaxUses()), "Unrestricted", "Diamond");
-        itemDiamondWand.setMaxDamage(Item.ToolMaterial.EMERALD.getMaxUses());
+        itemDiamondWand = new ItemUnrestrictedWand(new RestrictedWand(configValues.DIAMOND_WAND_DURABILITY), "Unrestricted", "Diamond");
+        itemDiamondWand.setMaxDamage(configValues.DIAMOND_WAND_DURABILITY);
         itemUnbreakableWand = new ItemUnrestrictedWand(new UnbreakingWand(), "Unbreakable", "Unbreakable");
         GameRegistry.registerItem(itemStoneWand, "wandStone");
         GameRegistry.registerItem(itemIronWand, "wandIron");
