@@ -9,10 +9,9 @@ import net.minecraft.item.ItemStack;
 public class UnbreakingWand implements IWand {
     @Override
     public int getMaxBlocks(ItemStack itemStack) {
-        if(itemStack.getItemDamage() <= 0) {
+        if (itemStack.getItemDamage() <= 0) {
             return 4096;
-        }
-        else {
+        } else {
             return 1 << itemStack.getItemDamage();
         }
     }

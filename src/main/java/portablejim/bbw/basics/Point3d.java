@@ -23,7 +23,7 @@ public class Point3d {
 
     public Point3d move(ForgeDirection direction) {
         int newX = x, newY = y, newZ = z;
-        switch(direction) {
+        switch (direction) {
             case UP:
                 newY += 1;
                 break;
@@ -62,7 +62,6 @@ public class Point3d {
 
         Point3d that = (Point3d) o;
         return x == that.x && y == that.y && z == that.z;
-
     }
 
     @Override
@@ -77,5 +76,4 @@ public class Point3d {
     public String toString() {
         return String.format("(%d,%d,%d)", x, y, z);
     }
-
 }

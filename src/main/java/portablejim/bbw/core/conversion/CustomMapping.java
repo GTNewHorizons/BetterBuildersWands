@@ -43,6 +43,10 @@ public class CustomMapping {
     }
 
     public boolean equals(CustomMapping that) {
-        return this.lookBlock == that.lookBlock && this.meta == that.meta && this.items == that.items && this.placeBlock == that.placeBlock && this.placeMeta == that.placeMeta;
+        return this.lookBlock == that.lookBlock
+                && this.meta == that.meta
+                && this.items == that.items
+                && this.placeBlock == that.placeBlock
+                && this.placeMeta == that.placeMeta;
     }
 }

@@ -10,6 +10,7 @@ import portablejim.bbw.basics.Point3d;
  */
 public interface IWorldShim {
     Block getBlock(Point3d point);
+
     boolean blockIsAir(Point3d point);
 
     World getWorld();

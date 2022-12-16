@@ -31,13 +31,10 @@ public class KeyEvents {
     public void KeyEvent(InputEvent event) {
         boolean currentIsPressed = keyBinding.getIsKeyPressed();
         boolean currentFluidIsPressed = keyBindingFluid.isPressed();
-        if(currentIsPressed != isPressed || currentFluidIsPressed != isPressedFluid) {
+        if (currentIsPressed != isPressed || currentFluidIsPressed != isPressedFluid) {
             isPressed = currentIsPressed;
             PacketWandActivate packet = new PacketWandActivate(currentIsPressed, currentFluidIsPressed);
             BetterBuildersWandsMod.instance.networkWrapper.sendToServer(packet);
         }
-
     }
-
-
 }

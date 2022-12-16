@@ -1,23 +1,22 @@
 package portablejim.bbw.core.items;
 
-import net.minecraft.creativetab.CreativeTabs;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import portablejim.bbw.basics.EnumFluidLock;
-import portablejim.bbw.core.wands.IWand;
-import portablejim.bbw.basics.EnumLock;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import net.minecraft.creativetab.CreativeTabs;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
+import portablejim.bbw.basics.EnumFluidLock;
+import portablejim.bbw.basics.EnumLock;
+import portablejim.bbw.core.wands.IWand;
 
 /**
  * The actual item: Simple wand with no durability. Similar to current Builder's Wand.
  */
-public class ItemUnrestrictedWand extends ItemBasicWand{
+public class ItemUnrestrictedWand extends ItemBasicWand {
 
     protected Set<Integer> subItemMetas = new HashSet<Integer>();
 
@@ -29,7 +28,7 @@ public class ItemUnrestrictedWand extends ItemBasicWand{
     }
 
     public EnumLock getFaceLock(ItemStack itemStack) {
-        if(getMode(itemStack) == EnumLock.HORIZONTAL) {
+        if (getMode(itemStack) == EnumLock.HORIZONTAL) {
             return EnumLock.HORIZONTAL;
         }
         return EnumLock.NOLOCK;
@@ -37,8 +36,7 @@ public class ItemUnrestrictedWand extends ItemBasicWand{
 
     @Override
     public void nextMode(ItemStack itemStack, EntityPlayer player) {
-        switch(getMode(itemStack)) {
-
+        switch (getMode(itemStack)) {
             case NORTHSOUTH:
                 setMode(itemStack, EnumLock.EASTWEST);
                 break;
@@ -65,7 +63,7 @@ public class ItemUnrestrictedWand extends ItemBasicWand{
 
     @Override
     public void nextFluidMode(ItemStack itemStack, EntityPlayer player) {
-        switch(getFluidMode(itemStack)) {
+        switch (getFluidMode(itemStack)) {
             case STOPAT:
                 setFluidMode(itemStack, EnumFluidLock.IGNORE);
                 break;
@@ -82,17 +80,14 @@ public class ItemUnrestrictedWand extends ItemBasicWand{
 
     @SuppressWarnings("unchecked")
     public void getSubItems(Item item, CreativeTabs creativeTabs, List list) {
-        if(subItemMetas.isEmpty()) {
+        if (subItemMetas.isEmpty()) {
             list.add(new ItemStack(item, 1, 0));
-        }
-        else {
+        } else {
             ArrayList<Integer> metas = new ArrayList<Integer>(this.subItemMetas);
             Collections.sort(metas);
             for (Integer meta : metas) {
                 list.add(new ItemStack(item, 1, meta));
-
             }
         }
     }
-
 }

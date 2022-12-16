@@ -5,7 +5,5 @@ package portablejim.bbw.proxy;
  */
 public class CommonProxy implements IProxy {
     @Override
-    public void RegisterEvents() {
-
-    }
+    public void RegisterEvents() {}
 }

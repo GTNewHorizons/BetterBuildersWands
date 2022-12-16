@@ -1,13 +1,12 @@
 package portablejim.bbw.shims;
 
+import java.util.List;
 import net.minecraft.block.Block;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.init.Blocks;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.world.World;
 import portablejim.bbw.basics.Point3d;
-
-import java.util.List;
 
 /**
  * Wrap a world to provide basic functions.
@@ -22,7 +21,7 @@ public class BasicWorldShim implements IWorldShim {
 
     @Override
     public Block getBlock(Point3d point) {
-        if(world != null) {
+        if (world != null) {
             return world.getBlock(point.x, point.y, point.z);
         }
         return null;
@@ -56,7 +55,7 @@ public class BasicWorldShim implements IWorldShim {
 
     @Override
     public int getMetadata(Point3d point) {
-        if(world != null) {
+        if (world != null) {
             return world.getBlockMetadata(point.x, point.y, point.z);
         }
         return 0;
@@ -64,7 +63,7 @@ public class BasicWorldShim implements IWorldShim {
 
     @Override
     public boolean entitiesInBox(AxisAlignedBB box) {
-        if(box == null) return false;
+        if (box == null) return false;
 
         List entitiesWithinAABB = world.getEntitiesWithinAABB(EntityLivingBase.class, box);
         return entitiesWithinAABB.size() > 0;
@@ -72,8 +71,14 @@ public class BasicWorldShim implements IWorldShim {
 
     @Override
     public void playPlaceAtBlock(Point3d position, Block blockType) {
-        if(position != null && blockType != null) {
-            world.playSoundEffect(position.x + 0.5D, position.y + 0.5D, position.z + 0.5D, blockType.stepSound.func_150496_b(), (blockType.stepSound.getVolume() + 1.0F) / 2.0F, blockType.stepSound.getPitch() * 0.8F);
+        if (position != null && blockType != null) {
+            world.playSoundEffect(
+                    position.x + 0.5D,
+                    position.y + 0.5D,
+                    position.z + 0.5D,
+                    blockType.stepSound.func_150496_b(),
+                    (blockType.stepSound.getVolume() + 1.0F) / 2.0F,
+                    blockType.stepSound.getPitch() * 0.8F);
         }
     }
 

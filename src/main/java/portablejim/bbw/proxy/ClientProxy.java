@@ -16,6 +16,5 @@ public class ClientProxy extends CommonProxy {
         keyevents = new KeyEvents();
         blockEvents = new BlockEvents();
         MinecraftForge.EVENT_BUS.register(blockEvents);
-
     }
 }

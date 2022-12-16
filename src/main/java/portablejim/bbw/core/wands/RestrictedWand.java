@@ -12,6 +12,7 @@ public class RestrictedWand implements IWand {
     public RestrictedWand(int limit) {
         this.blocklimit = limit;
     }
+
     @Override
     public int getMaxBlocks(ItemStack itemStack) {
         return Math.min(itemStack.getMaxDamage() - itemStack.getItemDamage(), this.blocklimit);
@@ -20,7 +21,7 @@ public class RestrictedWand implements IWand {
     @Override
     public boolean placeBlock(ItemStack itemStack, EntityLivingBase entityLivingBase) {
         itemStack.damageItem(1, entityLivingBase);
-        if(itemStack.stackSize > 0 && itemStack.getItemDamage() == itemStack.getMaxDamage()) {
+        if (itemStack.stackSize > 0 && itemStack.getItemDamage() == itemStack.getMaxDamage()) {
             itemStack.stackSize = 0;
         }
         return true;

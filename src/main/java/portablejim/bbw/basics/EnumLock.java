@@ -14,16 +14,16 @@ public enum EnumLock {
 
     public final int mask;
 
-    public final static int NORTH_SOUTH_MASK = 1;
-    public final static int UP_DOWN_MASK = 2;
-    public final static int EAST_WEST_MASK = 4;
+    public static final int NORTH_SOUTH_MASK = 1;
+    public static final int UP_DOWN_MASK = 2;
+    public static final int EAST_WEST_MASK = 4;
 
     EnumLock(int mask) {
         this.mask = mask;
     }
 
-    public  static EnumLock fromMask(int inputMask) {
-        EnumLock locks[] = { NORTHSOUTH, VERTICAL, VERTICALEASTWEST, EASTWEST, HORIZONTAL, VERTICALNORTHSOUTH, NOLOCK };
+    public static EnumLock fromMask(int inputMask) {
+        EnumLock locks[] = {NORTHSOUTH, VERTICAL, VERTICALEASTWEST, EASTWEST, HORIZONTAL, VERTICALNORTHSOUTH, NOLOCK};
 
         int safeMask = inputMask & 7;
         return locks[safeMask - 1];

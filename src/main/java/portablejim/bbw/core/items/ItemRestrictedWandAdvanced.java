@@ -21,7 +21,7 @@ public class ItemRestrictedWandAdvanced extends ItemBasicWand {
     @Override
     public void nextMode(ItemStack itemStack, EntityPlayer player) {
 
-        switch(getMode(itemStack)) {
+        switch (getMode(itemStack)) {
             case VERTICAL:
                 setMode(itemStack, EnumLock.HORIZONTAL);
                 break;
