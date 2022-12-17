@@ -81,8 +81,7 @@ public class BetterBuildersWandsMod {
 
         itemStoneWand = new ItemRestrictedWandBasic(new RestrictedWand(5));
         itemIronWand = new ItemRestrictedWandAdvanced(new RestrictedWand(9));
-        itemDiamondWand = new ItemUnrestrictedWand(new RestrictedWand(configValues.DIAMOND_WAND_DURABILITY), "Unrestricted", "Diamond");
-        itemDiamondWand.setMaxDamage(configValues.DIAMOND_WAND_DURABILITY);
+
         itemUnbreakableWand = new ItemUnrestrictedWand(new UnbreakingWand(), "Unbreakable", "Unbreakable");
         GameRegistry.registerItem(itemStoneWand, "wandStone");
         GameRegistry.registerItem(itemIronWand, "wandIron");
@@ -91,6 +90,10 @@ public class BetterBuildersWandsMod {
 
         configValues = new ConfigValues(event.getSuggestedConfigurationFile());
         configValues.loadConfigFile();
+
+        itemDiamondWand = new ItemUnrestrictedWand(
+                new RestrictedWand(configValues.DIAMOND_WAND_DURABILITY), "Unrestricted", "Diamond");
+        itemDiamondWand.setMaxDamage(configValues.DIAMOND_WAND_DURABILITY);
 
         networkWrapper = NetworkRegistry.INSTANCE.newSimpleChannel("bbwands");
         networkWrapper.registerMessage(PacketWandActivate.Handler.class, PacketWandActivate.class, 0, Side.SERVER);
