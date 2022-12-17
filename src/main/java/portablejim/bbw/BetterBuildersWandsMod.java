@@ -91,7 +91,7 @@ public class BetterBuildersWandsMod {
         configValues.loadConfigFile();
 
         itemDiamondWand = new ItemUnrestrictedWand(
-                new RestrictedWand(configValues.DIAMOND_WAND_DURABILITY), "Unrestricted", "Diamond");
+                new RestrictedWand(Item.ToolMaterial.EMERALD.getMaxUses()), "Unrestricted", "Diamond");
         itemDiamondWand.setMaxDamage(configValues.DIAMOND_WAND_DURABILITY);
         GameRegistry.registerItem(itemDiamondWand, "wandDiamond");
         networkWrapper = NetworkRegistry.INSTANCE.newSimpleChannel("bbwands");
