@@ -13,7 +13,7 @@ public class ConfigValues {
     private Configuration configFile;
 
     public int DIAMOND_WAND_DURABILITY;
-    public static final int DIAMOND_WAND_DURABILITY_DEFAULT = 1000;
+    public static final int DIAMOND_WAND_DURABILITY_DEFAULT = 10000;
     public static final String DIAMOND_WAND_DURABILITY_NAME = "diamond_wand_durability";
     public static final String DIAMOND_WAND_DURABILITY_DESCRIPTION = "Durability of the Diamond Building Wand";
     public static final String CONFIG_WHYNOT = "why_not";
