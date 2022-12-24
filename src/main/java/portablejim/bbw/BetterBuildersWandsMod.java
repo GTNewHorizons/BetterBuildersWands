@@ -81,18 +81,19 @@ public class BetterBuildersWandsMod {
 
         itemStoneWand = new ItemRestrictedWandBasic(new RestrictedWand(5));
         itemIronWand = new ItemRestrictedWandAdvanced(new RestrictedWand(9));
-        itemDiamondWand = new ItemUnrestrictedWand(
-                new RestrictedWand(Item.ToolMaterial.EMERALD.getMaxUses()), "Unrestricted", "Diamond");
-        itemDiamondWand.setMaxDamage(Item.ToolMaterial.EMERALD.getMaxUses());
+
         itemUnbreakableWand = new ItemUnrestrictedWand(new UnbreakingWand(), "Unbreakable", "Unbreakable");
         GameRegistry.registerItem(itemStoneWand, "wandStone");
         GameRegistry.registerItem(itemIronWand, "wandIron");
-        GameRegistry.registerItem(itemDiamondWand, "wandDiamond");
         GameRegistry.registerItem(itemUnbreakableWand, "wandUnbreakable");
 
         configValues = new ConfigValues(event.getSuggestedConfigurationFile());
         configValues.loadConfigFile();
 
+        itemDiamondWand = new ItemUnrestrictedWand(
+                new RestrictedWand(Item.ToolMaterial.EMERALD.getMaxUses()), "Unrestricted", "Diamond");
+        itemDiamondWand.setMaxDamage(configValues.DIAMOND_WAND_DURABILITY);
+        GameRegistry.registerItem(itemDiamondWand, "wandDiamond");
         networkWrapper = NetworkRegistry.INSTANCE.newSimpleChannel("bbwands");
         networkWrapper.registerMessage(PacketWandActivate.Handler.class, PacketWandActivate.class, 0, Side.SERVER);
 

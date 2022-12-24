@@ -12,6 +12,10 @@ import net.minecraftforge.common.config.Configuration;
 public class ConfigValues {
     private Configuration configFile;
 
+    public int DIAMOND_WAND_DURABILITY;
+    public static final int DIAMOND_WAND_DURABILITY_DEFAULT = 10000;
+    public static final String DIAMOND_WAND_DURABILITY_NAME = "diamond_wand_durability";
+    public static final String DIAMOND_WAND_DURABILITY_DESCRIPTION = "Durability of the Diamond Building Wand";
     public static final String CONFIG_WHYNOT = "why_not";
     public static final String CONFIG_GENERAL = "general";
 
@@ -93,6 +97,14 @@ public class ConfigValues {
         HARD_BLACKLIST_SET = new TreeSet<String>(Arrays.asList(HARD_BLACKLIST));
         //noinspection unchecked
         SOFT_BLACKLIST_SET = new TreeSet<String>(Arrays.asList(SOFT_BLACKLIST));
+
+        DIAMOND_WAND_DURABILITY = configFile
+                .get(
+                        DIAMOND_WAND_DURABILITY_NAME,
+                        CONFIG_GENERAL,
+                        DIAMOND_WAND_DURABILITY_DEFAULT,
+                        DIAMOND_WAND_DURABILITY_DESCRIPTION)
+                .getInt();
 
         configFile.save();
     }
