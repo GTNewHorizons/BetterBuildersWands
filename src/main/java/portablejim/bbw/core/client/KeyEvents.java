@@ -13,8 +13,8 @@ import portablejim.bbw.network.PacketWandActivate;
  * Created by james on 16/10/15.
  */
 public class KeyEvents {
-    public KeyBinding keyBinding = new KeyBinding("bbw.key.mode", Keyboard.KEY_M, "bbw.key.category");
-    public KeyBinding keyBindingFluid = new KeyBinding("bbw.key.fluidmode", Keyboard.KEY_F, "bbw.key.category");
+    public KeyBinding keyBinding = new KeyBinding("bbw.key.mode", Keyboard.KEY_NONE, "bbw.key.category");
+    public KeyBinding keyBindingFluid = new KeyBinding("bbw.key.fluidmode", Keyboard.KEY_NONE, "bbw.key.category");
 
     private boolean isPressed;
     private boolean isPressedFluid;
