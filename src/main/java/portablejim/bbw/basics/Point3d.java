@@ -6,6 +6,7 @@ import net.minecraftforge.common.util.ForgeDirection;
  * Point to represent 3D space. Functions to move in that space.
  */
 public class Point3d {
+
     public static int UP = 1;
     public static int DOWN = -1;
     public static int EAST = 1;

@@ -2,6 +2,7 @@ package portablejim.bbw.core.items;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
+
 import portablejim.bbw.basics.EnumFluidLock;
 import portablejim.bbw.basics.EnumLock;
 import portablejim.bbw.core.wands.RestrictedWand;
@@ -10,6 +11,7 @@ import portablejim.bbw.core.wands.RestrictedWand;
  * Item for wand that takes damage.
  */
 public class ItemRestrictedWandBasic extends ItemBasicWand {
+
     public ItemRestrictedWandBasic(RestrictedWand wand) {
         super();
         setMaxDamage(ToolMaterial.STONE.getMaxUses());

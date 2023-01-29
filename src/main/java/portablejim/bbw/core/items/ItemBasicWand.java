@@ -3,6 +3,7 @@ package portablejim.bbw.core.items;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
+
 import net.minecraft.block.Block;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.EntityLivingBase;
@@ -15,6 +16,7 @@ import net.minecraft.util.StatCollector;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.common.util.ForgeDirection;
+
 import portablejim.bbw.BetterBuildersWandsMod;
 import portablejim.bbw.basics.EnumFluidLock;
 import portablejim.bbw.basics.EnumLock;
@@ -31,6 +33,7 @@ import portablejim.bbw.shims.IWorldShim;
  * Class to cover common functions between wands.
  */
 public abstract class ItemBasicWand extends Item implements IWandItem {
+
     public IWand wand;
 
     public ItemBasicWand() {
@@ -39,17 +42,8 @@ public abstract class ItemBasicWand extends Item implements IWandItem {
         this.setMaxStackSize(1);
     }
 
-    public boolean onItemUse(
-            ItemStack itemstack,
-            EntityPlayer player,
-            World world,
-            int x,
-            int y,
-            int z,
-            int side,
-            float hitX,
-            float hitY,
-            float hitZ) {
+    public boolean onItemUse(ItemStack itemstack, EntityPlayer player, World world, int x, int y, int z, int side,
+            float hitX, float hitY, float hitZ) {
         if (wand == null) {
             return false;
         }
@@ -88,8 +82,8 @@ public abstract class ItemBasicWand extends Item implements IWandItem {
                         getFaceLock(itemstack),
                         getFluidMode(itemstack));
 
-                ArrayList<Point3d> placedBlocks =
-                        worker.placeBlocks(itemstack, blocks, clickedPos, sourceItems, side, hitX, hitY, hitZ);
+                ArrayList<Point3d> placedBlocks = worker
+                        .placeBlocks(itemstack, blocks, clickedPos, sourceItems, side, hitX, hitY, hitZ);
                 if (placedBlocks.size() > 0) {
                     int[] placedIntArray = new int[placedBlocks.size() * 3];
                     for (int i = 0; i < placedBlocks.size(); i++) {
@@ -98,8 +92,8 @@ public abstract class ItemBasicWand extends Item implements IWandItem {
                         placedIntArray[i * 3 + 1] = currentPoint.y;
                         placedIntArray[i * 3 + 2] = currentPoint.z;
                     }
-                    NBTTagCompound itemNBT =
-                            itemstack.hasTagCompound() ? itemstack.getTagCompound() : new NBTTagCompound();
+                    NBTTagCompound itemNBT = itemstack.hasTagCompound() ? itemstack.getTagCompound()
+                            : new NBTTagCompound();
                     NBTTagCompound bbwCompound = new NBTTagCompound();
                     if (itemNBT.hasKey("bbw", Constants.NBT.TAG_COMPOUND)) {
                         bbwCompound = itemNBT.getCompoundTag("bbw");
@@ -143,8 +137,9 @@ public abstract class ItemBasicWand extends Item implements IWandItem {
                 lines.add(StatCollector.translateToLocal(BetterBuildersWandsMod.LANGID + ".hover.mode.horizontal"));
                 break;
             case VERTICALNORTHSOUTH:
-                lines.add(StatCollector.translateToLocal(
-                        BetterBuildersWandsMod.LANGID + ".hover.mode.verticalnorthsouth"));
+                lines.add(
+                        StatCollector
+                                .translateToLocal(BetterBuildersWandsMod.LANGID + ".hover.mode.verticalnorthsouth"));
                 break;
             case NOLOCK:
                 lines.add(StatCollector.translateToLocal(BetterBuildersWandsMod.LANGID + ".hover.mode.nolock"));
@@ -161,8 +156,10 @@ public abstract class ItemBasicWand extends Item implements IWandItem {
         }
 
         if (!itemstack.isItemStackDamageable() || !itemstack.isItemDamaged()) {
-            lines.add(StatCollector.translateToLocalFormatted(
-                    BetterBuildersWandsMod.LANGID + ".hover.maxblocks", wand.getMaxBlocks(itemstack)));
+            lines.add(
+                    StatCollector.translateToLocalFormatted(
+                            BetterBuildersWandsMod.LANGID + ".hover.maxblocks",
+                            wand.getMaxBlocks(itemstack)));
         }
     }
 
@@ -172,8 +169,8 @@ public abstract class ItemBasicWand extends Item implements IWandItem {
     }
 
     @Override
-    public boolean onBlockDestroyed(
-            ItemStack itemStack, World world, Block block, int x, int y, int z, EntityLivingBase entityLivingBase) {
+    public boolean onBlockDestroyed(ItemStack itemStack, World world, Block block, int x, int y, int z,
+            EntityLivingBase entityLivingBase) {
         itemStack.damageItem(2, entityLivingBase);
         return true;
     }
@@ -203,8 +200,7 @@ public abstract class ItemBasicWand extends Item implements IWandItem {
             NBTTagCompound itemBaseNBT = item.getTagCompound();
             if (itemBaseNBT != null && itemBaseNBT.hasKey("bbw", Constants.NBT.TAG_COMPOUND)) {
                 NBTTagCompound itemNBT = itemBaseNBT.getCompoundTag("bbw");
-                int mask = itemNBT.hasKey("mask", Constants.NBT.TAG_SHORT)
-                        ? itemNBT.getShort("mask")
+                int mask = itemNBT.hasKey("mask", Constants.NBT.TAG_SHORT) ? itemNBT.getShort("mask")
                         : EnumLock.NOLOCK.mask;
                 return EnumLock.fromMask(mask);
             }
@@ -232,8 +228,7 @@ public abstract class ItemBasicWand extends Item implements IWandItem {
             NBTTagCompound itemBaseNBT = item.getTagCompound();
             if (itemBaseNBT != null && itemBaseNBT.hasKey("bbw", Constants.NBT.TAG_COMPOUND)) {
                 NBTTagCompound itemNBT = itemBaseNBT.getCompoundTag("bbw");
-                int mask = itemNBT.hasKey("fluidmask", Constants.NBT.TAG_SHORT)
-                        ? itemNBT.getShort("fluidmask")
+                int mask = itemNBT.hasKey("fluidmask", Constants.NBT.TAG_SHORT) ? itemNBT.getShort("fluidmask")
                         : EnumFluidLock.STOPAT.mask;
                 return EnumFluidLock.fromMask(mask);
             }

@@ -1,18 +1,21 @@
 package portablejim.bbw.core.conversion;
 
-import cpw.mods.fml.common.registry.GameRegistry;
 import java.util.ArrayList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
 import net.minecraft.block.Block;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+
 import portablejim.bbw.BetterBuildersWandsMod;
+import cpw.mods.fml.common.registry.GameRegistry;
 
 /**
  * Handle the mappings to force blocks to build with certain materials.
  */
 public class CustomMappingManager {
+
     ArrayList<CustomMapping> mappings;
 
     public CustomMappingManager() {
@@ -43,8 +46,7 @@ public class CustomMappingManager {
             int itemCount = Integer.parseInt(m.group(3));
 
             String itemString = m.group(4);
-            Item itemItem = GameRegistry.findItem(
-                    itemString.split(":", 2)[0], itemString.split(":", 2)[1]);
+            Item itemItem = GameRegistry.findItem(itemString.split(":", 2)[0], itemString.split(":", 2)[1]);
 
             int itemMeta = Integer.parseInt(m.group(5));
             Block targetBlock = Block.getBlockFromName(m.group(6));
@@ -52,8 +54,12 @@ public class CustomMappingManager {
 
             if (sourceBlock != null && itemItem != null && targetBlock != null) {
                 ItemStack itemItemstack = new ItemStack(itemItem, itemCount, itemMeta);
-                CustomMapping newMapping =
-                        new CustomMapping(sourceBlock, sourceMeta, itemItemstack, targetBlock, targetMeta);
+                CustomMapping newMapping = new CustomMapping(
+                        sourceBlock,
+                        sourceMeta,
+                        itemItemstack,
+                        targetBlock,
+                        targetMeta);
                 BetterBuildersWandsMod.logger.info(String.format("Added '%s' to mapping", mappingString));
                 return newMapping;
             }

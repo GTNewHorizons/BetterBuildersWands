@@ -1,7 +1,7 @@
 package portablejim.bbw.core;
 
-import cpw.mods.fml.common.registry.GameRegistry;
 import java.util.ArrayList;
+
 import net.minecraft.command.CommandBase;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.command.WrongUsageException;
@@ -10,14 +10,17 @@ import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.common.util.Constants;
+
 import portablejim.bbw.BetterBuildersWandsMod;
 import portablejim.bbw.basics.Point3d;
 import portablejim.bbw.core.items.IWandItem;
+import cpw.mods.fml.common.registry.GameRegistry;
 
 /**
  * /wandOops command.
  */
 public class OopsCommand extends CommandBase {
+
     @Override
     public String getCommandName() {
         return "wandOops";
@@ -33,14 +36,12 @@ public class OopsCommand extends CommandBase {
         if (sender instanceof EntityPlayerMP) {
             EntityPlayerMP player = (EntityPlayerMP) sender;
             ItemStack currentItemstack = player.getCurrentEquippedItem();
-            if (currentItemstack != null
-                    && currentItemstack.getItem() != null
+            if (currentItemstack != null && currentItemstack.getItem() != null
                     && currentItemstack.getItem() instanceof IWandItem) {
                 NBTTagCompound tagComponent = currentItemstack.getTagCompound();
 
                 NBTTagCompound bbwCompound;
-                if (tagComponent != null
-                        && tagComponent.hasKey("bbw", Constants.NBT.TAG_COMPOUND)
+                if (tagComponent != null && tagComponent.hasKey("bbw", Constants.NBT.TAG_COMPOUND)
                         && tagComponent.getCompoundTag("bbw").hasKey("lastPlaced", Constants.NBT.TAG_INT_ARRAY)) {
                     bbwCompound = tagComponent.getCompoundTag("bbw");
                     ArrayList<Point3d> pointList = unpackNbt(bbwCompound.getIntArray("lastPlaced"));
@@ -49,8 +50,8 @@ public class OopsCommand extends CommandBase {
                     }
                     if (bbwCompound.hasKey("lastBlock", Constants.NBT.TAG_STRING)
                             && bbwCompound.hasKey("lastPerBlock", Constants.NBT.TAG_INT)) {
-                        GameRegistry.UniqueIdentifier lastBlock =
-                                new GameRegistry.UniqueIdentifier(bbwCompound.getString("lastBlock"));
+                        GameRegistry.UniqueIdentifier lastBlock = new GameRegistry.UniqueIdentifier(
+                                bbwCompound.getString("lastBlock"));
                         int damageValue = bbwCompound.getInteger("lastDamage");
                         ItemStack itemStack = GameRegistry.findItemStack(lastBlock.modId, lastBlock.name, 1);
                         itemStack.setItemDamage(damageValue);
@@ -60,13 +61,23 @@ public class OopsCommand extends CommandBase {
                         for (int i = 0; i < fullStacks; i++) {
                             ItemStack newStack = itemStack.copy();
                             newStack.stackSize = stackSize;
-                            player.worldObj.spawnEntityInWorld(new EntityItem(
-                                    player.getEntityWorld(), player.posX, player.posY, player.posZ, newStack));
+                            player.worldObj.spawnEntityInWorld(
+                                    new EntityItem(
+                                            player.getEntityWorld(),
+                                            player.posX,
+                                            player.posY,
+                                            player.posZ,
+                                            newStack));
                         }
                         ItemStack finalStack = itemStack.copy();
                         finalStack.stackSize = count % stackSize;
-                        player.worldObj.spawnEntityInWorld(new EntityItem(
-                                player.getEntityWorld(), player.posX, player.posY, player.posZ, finalStack));
+                        player.worldObj.spawnEntityInWorld(
+                                new EntityItem(
+                                        player.getEntityWorld(),
+                                        player.posX,
+                                        player.posY,
+                                        player.posZ,
+                                        finalStack));
 
                         bbwCompound.removeTag("lastPlaced");
                         bbwCompound.removeTag("lastBlock");

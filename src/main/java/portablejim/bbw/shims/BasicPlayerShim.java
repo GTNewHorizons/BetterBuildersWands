@@ -2,10 +2,12 @@ package portablejim.bbw.shims;
 
 import java.util.ArrayList;
 import java.util.List;
+
 import net.minecraft.block.Block;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
+
 import portablejim.bbw.basics.Point3d;
 import vazkii.botania.api.item.IBlockProvider;
 
@@ -13,6 +15,7 @@ import vazkii.botania.api.item.IBlockProvider;
  * Wrap a player to provide basic functions.
  */
 public class BasicPlayerShim implements IPlayerShim {
+
     private EntityPlayer player;
     private boolean providersEnabled;
 
@@ -58,14 +61,13 @@ public class BasicPlayerShim implements IPlayerShim {
         for (ItemStack inventoryStack : player.inventory.mainInventory) {
             if (inventoryStack != null && itemStack.isItemEqual(inventoryStack)) {
                 total += Math.max(0, inventoryStack.stackSize);
-            } else if (providersEnabled
-                    && inventoryStack != null
-                    && inventoryStack.getItem() instanceof IBlockProvider) {
-                IBlockProvider prov = (IBlockProvider) inventoryStack.getItem();
-                int provCount = prov.getBlockCount(player, itemStack, inventoryStack, block, meta);
-                if (provCount == -1) return Integer.MAX_VALUE;
-                total += provCount;
-            }
+            } else
+                if (providersEnabled && inventoryStack != null && inventoryStack.getItem() instanceof IBlockProvider) {
+                    IBlockProvider prov = (IBlockProvider) inventoryStack.getItem();
+                    int provCount = prov.getBlockCount(player, itemStack, inventoryStack, block, meta);
+                    if (provCount == -1) return Integer.MAX_VALUE;
+                    total += provCount;
+                }
         }
 
         return itemStack.stackSize > 0 ? total / itemStack.stackSize : 0;
@@ -97,11 +99,10 @@ public class BasicPlayerShim implements IPlayerShim {
                 if (toUse <= 0) {
                     return true;
                 }
-            } else if (providersEnabled
-                    && inventoryStack != null
-                    && inventoryStack.getItem() instanceof IBlockProvider) {
-                providers.add(inventoryStack);
-            }
+            } else
+                if (providersEnabled && inventoryStack != null && inventoryStack.getItem() instanceof IBlockProvider) {
+                    providers.add(inventoryStack);
+                }
         }
 
         // IBlockProvider does not support removing more than one item in an atomic operation.

@@ -1,10 +1,10 @@
 package portablejim.bbw.core;
 
-import cpw.mods.fml.common.FMLLog;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.Random;
+
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockLiquid;
 import net.minecraft.item.Item;
@@ -12,6 +12,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraftforge.common.util.ForgeDirection;
 import net.minecraftforge.fluids.IFluidBlock;
+
 import portablejim.bbw.BetterBuildersWandsMod;
 import portablejim.bbw.basics.EnumFluidLock;
 import portablejim.bbw.basics.EnumLock;
@@ -20,11 +21,13 @@ import portablejim.bbw.core.conversion.CustomMapping;
 import portablejim.bbw.core.wands.IWand;
 import portablejim.bbw.shims.IPlayerShim;
 import portablejim.bbw.shims.IWorldShim;
+import cpw.mods.fml.common.FMLLog;
 
 /**
  * Does the heavy work of working out the blocks to place and places them.
  */
 public class WandWorker {
+
     private final IWand wand;
     private final IPlayerShim player;
     private final IWorldShim world;
@@ -61,40 +64,38 @@ public class WandWorker {
         String blockString = String.format("%s/%s", Block.blockRegistry.getNameForObject(block), meta);
         if (customMapping != null) {
             stack = customMapping.getItems();
-        } else if (block.canSilkHarvest(
-                world.getWorld(), player.getPlayer(), blockPos.x, blockPos.y, blockPos.z, meta)) {
-            stack = BetterBuildersWandsMod.instance.blockCache.getStackedBlock(world, blockPos);
-        } else if (!BetterBuildersWandsMod.instance.configValues.SOFT_BLACKLIST_SET.contains(blockString)) {
-            Item dropped = block.getItemDropped(meta, new Random(), 0);
-            if (dropped != null) {
-                stack = new ItemStack(dropped, block.quantityDropped(meta, 0, new Random()), block.damageDropped(meta));
+        } else
+            if (block.canSilkHarvest(world.getWorld(), player.getPlayer(), blockPos.x, blockPos.y, blockPos.z, meta)) {
+                stack = BetterBuildersWandsMod.instance.blockCache.getStackedBlock(world, blockPos);
+            } else if (!BetterBuildersWandsMod.instance.configValues.SOFT_BLACKLIST_SET.contains(blockString)) {
+                Item dropped = block.getItemDropped(meta, new Random(), 0);
+                if (dropped != null) {
+                    stack = new ItemStack(
+                            dropped,
+                            block.quantityDropped(meta, 0, new Random()),
+                            block.damageDropped(meta));
+                }
             }
-        }
         // ForgeEventFactory.fireBlockHarvesting(items,this.world.getWorld(), block, blockPos.x, blockPos.y, blockPos.z,
         // world.getMetadata(blockPos), 0, 1.0F, true, this.player.getPlayer());
         return stack;
     }
 
-    private boolean shouldContinue(
-            Point3d currentCandidate,
-            Block targetBlock,
-            int targetMetadata,
-            Block candidateSupportingBlock,
-            int candidateSupportingMeta,
-            AxisAlignedBB blockBB,
+    private boolean shouldContinue(Point3d currentCandidate, Block targetBlock, int targetMetadata,
+            Block candidateSupportingBlock, int candidateSupportingMeta, AxisAlignedBB blockBB,
             EnumFluidLock fluidLock) {
         if (!world.blockIsAir(currentCandidate)) {
             Block currrentCandidateBlock = world.getBlock(currentCandidate);
-            if (!(fluidLock == EnumFluidLock.IGNORE
-                    && currrentCandidateBlock != null
+            if (!(fluidLock == EnumFluidLock.IGNORE && currrentCandidateBlock != null
                     && (currrentCandidateBlock instanceof IFluidBlock
-                            || currrentCandidateBlock instanceof BlockLiquid))) return false;
-        }
-        ;
-        /*if((FluidRegistry.getFluid("water").getBlock().equals(world.getBlock(currentCandidate)) || FluidRegistry.getFluid("lava").getBlock().equals(world.getBlock(currentCandidate)))
-                && world.getMetadata(currentCandidate) == 0){
-            return false;
-        }*/
+                            || currrentCandidateBlock instanceof BlockLiquid)))
+                return false;
+        } ;
+        /*
+         * if((FluidRegistry.getFluid("water").getBlock().equals(world.getBlock(currentCandidate)) ||
+         * FluidRegistry.getFluid("lava").getBlock().equals(world.getBlock(currentCandidate))) &&
+         * world.getMetadata(currentCandidate) == 0){ return false; }
+         */
         if (!targetBlock.equals(candidateSupportingBlock)) return false;
         if (targetMetadata != candidateSupportingMeta) return false;
         // if(targetBlock instanceof BlockCrops) return false;
@@ -108,18 +109,14 @@ public class WandWorker {
                 currentCandidate.y,
                 currentCandidate.z,
                 targetMetadata,
-                new ItemStack(candidateSupportingBlock, 1, candidateSupportingMeta))) return false;
+                new ItemStack(candidateSupportingBlock, 1, candidateSupportingMeta)))
+            return false;
 
         return !world.entitiesInBox(blockBB);
     }
 
-    public LinkedList<Point3d> getBlockPositionList(
-            Point3d blockLookedAt,
-            ForgeDirection placeDirection,
-            int maxBlocks,
-            EnumLock directionLock,
-            EnumLock faceLock,
-            EnumFluidLock fluidLock) {
+    public LinkedList<Point3d> getBlockPositionList(Point3d blockLookedAt, ForgeDirection placeDirection, int maxBlocks,
+            EnumLock directionLock, EnumLock faceLock, EnumFluidLock fluidLock) {
         LinkedList<Point3d> candidates = new LinkedList<Point3d>();
         LinkedList<Point3d> toPlace = new LinkedList<Point3d>();
 
@@ -131,7 +128,7 @@ public class WandWorker {
         int faceMaskInt = faceLock.mask;
 
         if (((directionLock != EnumLock.HORIZONTAL && directionLock != EnumLock.VERTICAL)
-                        || (placeDirection != ForgeDirection.UP && placeDirection != ForgeDirection.DOWN))
+                || (placeDirection != ForgeDirection.UP && placeDirection != ForgeDirection.DOWN))
                 && (directionLock != EnumLock.NORTHSOUTH
                         || (placeDirection != ForgeDirection.NORTH && placeDirection != ForgeDirection.SOUTH))
                 && (directionLock != EnumLock.EASTWEST
@@ -145,16 +142,18 @@ public class WandWorker {
             Block candidateSupportingBlock = world.getBlock(supportingPoint);
             int candidateSupportingMeta = world.getMetadata(supportingPoint);
             AxisAlignedBB blockBB = targetBlock.getCollisionBoundingBoxFromPool(
-                    world.getWorld(), currentCandidate.x, currentCandidate.y, currentCandidate.z);
+                    world.getWorld(),
+                    currentCandidate.x,
+                    currentCandidate.y,
+                    currentCandidate.z);
             if (shouldContinue(
-                            currentCandidate,
-                            targetBlock,
-                            targetMetadata,
-                            candidateSupportingBlock,
-                            candidateSupportingMeta,
-                            blockBB,
-                            fluidLock)
-                    && allCandidates.add(currentCandidate)) {
+                    currentCandidate,
+                    targetBlock,
+                    targetMetadata,
+                    candidateSupportingBlock,
+                    candidateSupportingMeta,
+                    blockBB,
+                    fluidLock) && allCandidates.add(currentCandidate)) {
                 toPlace.add(currentCandidate);
 
                 switch (placeDirection) {
@@ -171,18 +170,10 @@ public class WandWorker {
                                 candidates.add(currentCandidate.move(ForgeDirection.WEST));
                             if ((directionMaskInt & EnumLock.NORTH_SOUTH_MASK) > 0
                                     && (directionMaskInt & EnumLock.EAST_WEST_MASK) > 0) {
-                                candidates.add(currentCandidate
-                                        .move(ForgeDirection.NORTH)
-                                        .move(ForgeDirection.EAST));
-                                candidates.add(currentCandidate
-                                        .move(ForgeDirection.NORTH)
-                                        .move(ForgeDirection.WEST));
-                                candidates.add(currentCandidate
-                                        .move(ForgeDirection.SOUTH)
-                                        .move(ForgeDirection.EAST));
-                                candidates.add(currentCandidate
-                                        .move(ForgeDirection.SOUTH)
-                                        .move(ForgeDirection.WEST));
+                                candidates.add(currentCandidate.move(ForgeDirection.NORTH).move(ForgeDirection.EAST));
+                                candidates.add(currentCandidate.move(ForgeDirection.NORTH).move(ForgeDirection.WEST));
+                                candidates.add(currentCandidate.move(ForgeDirection.SOUTH).move(ForgeDirection.EAST));
+                                candidates.add(currentCandidate.move(ForgeDirection.SOUTH).move(ForgeDirection.WEST));
                             }
                         }
                         break;
@@ -199,16 +190,10 @@ public class WandWorker {
                                 candidates.add(currentCandidate.move(ForgeDirection.WEST));
                             if ((directionMaskInt & EnumLock.UP_DOWN_MASK) > 0
                                     && (directionMaskInt & EnumLock.EAST_WEST_MASK) > 0) {
-                                candidates.add(
-                                        currentCandidate.move(ForgeDirection.UP).move(ForgeDirection.EAST));
-                                candidates.add(
-                                        currentCandidate.move(ForgeDirection.UP).move(ForgeDirection.WEST));
-                                candidates.add(currentCandidate
-                                        .move(ForgeDirection.DOWN)
-                                        .move(ForgeDirection.EAST));
-                                candidates.add(currentCandidate
-                                        .move(ForgeDirection.DOWN)
-                                        .move(ForgeDirection.WEST));
+                                candidates.add(currentCandidate.move(ForgeDirection.UP).move(ForgeDirection.EAST));
+                                candidates.add(currentCandidate.move(ForgeDirection.UP).move(ForgeDirection.WEST));
+                                candidates.add(currentCandidate.move(ForgeDirection.DOWN).move(ForgeDirection.EAST));
+                                candidates.add(currentCandidate.move(ForgeDirection.DOWN).move(ForgeDirection.WEST));
                             }
                         }
                         break;
@@ -225,16 +210,10 @@ public class WandWorker {
                                 candidates.add(currentCandidate.move(ForgeDirection.SOUTH));
                             if ((directionMaskInt & EnumLock.UP_DOWN_MASK) > 0
                                     && (directionMaskInt & EnumLock.NORTH_SOUTH_MASK) > 0) {
-                                candidates.add(
-                                        currentCandidate.move(ForgeDirection.UP).move(ForgeDirection.NORTH));
-                                candidates.add(
-                                        currentCandidate.move(ForgeDirection.UP).move(ForgeDirection.SOUTH));
-                                candidates.add(currentCandidate
-                                        .move(ForgeDirection.DOWN)
-                                        .move(ForgeDirection.NORTH));
-                                candidates.add(currentCandidate
-                                        .move(ForgeDirection.DOWN)
-                                        .move(ForgeDirection.SOUTH));
+                                candidates.add(currentCandidate.move(ForgeDirection.UP).move(ForgeDirection.NORTH));
+                                candidates.add(currentCandidate.move(ForgeDirection.UP).move(ForgeDirection.SOUTH));
+                                candidates.add(currentCandidate.move(ForgeDirection.DOWN).move(ForgeDirection.NORTH));
+                                candidates.add(currentCandidate.move(ForgeDirection.DOWN).move(ForgeDirection.SOUTH));
                             }
                         }
                 }
@@ -243,20 +222,13 @@ public class WandWorker {
         return toPlace;
     }
 
-    public ArrayList<Point3d> placeBlocks(
-            ItemStack wandItem,
-            LinkedList<Point3d> blockPosList,
-            Point3d originalBlock,
-            ItemStack sourceItems,
-            int side,
-            float hitX,
-            float hitY,
-            float hitZ) {
+    public ArrayList<Point3d> placeBlocks(ItemStack wandItem, LinkedList<Point3d> blockPosList, Point3d originalBlock,
+            ItemStack sourceItems, int side, float hitX, float hitY, float hitZ) {
         ArrayList<Point3d> placedBlocks = new ArrayList<Point3d>();
         for (Point3d blockPos : blockPosList) {
             boolean blockPlaceSuccess;
-            CustomMapping mapping = BetterBuildersWandsMod.instance.mappingManager.getMapping(
-                    world.getBlock(originalBlock), world.getMetadata(originalBlock));
+            CustomMapping mapping = BetterBuildersWandsMod.instance.mappingManager
+                    .getMapping(world.getBlock(originalBlock), world.getMetadata(originalBlock));
             if (mapping != null) {
                 blockPlaceSuccess = world.setBlock(blockPos, mapping.getPlaceBlock(), mapping.getPlaceMeta());
             } else {
@@ -277,7 +249,12 @@ public class WandWorker {
                     placedBlocks.remove(placedBlocks.size() - 1);
                 } else {
                     block.onBlockPlacedBy(
-                            world.getWorld(), blockPos.x, blockPos.y, blockPos.z, player.getPlayer(), sourceItems);
+                            world.getWorld(),
+                            blockPos.x,
+                            blockPos.y,
+                            blockPos.z,
+                            player.getPlayer(),
+                            sourceItems);
                 }
             }
         }

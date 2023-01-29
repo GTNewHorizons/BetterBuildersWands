@@ -7,6 +7,7 @@ import net.minecraft.item.ItemStack;
  * Created by james on 18/12/15.
  */
 public class CustomMapping {
+
     private final Block lookBlock;
     private final int meta;
     private final ItemStack items;
@@ -43,8 +44,7 @@ public class CustomMapping {
     }
 
     public boolean equals(CustomMapping that) {
-        return this.lookBlock == that.lookBlock
-                && this.meta == that.meta
+        return this.lookBlock == that.lookBlock && this.meta == that.meta
                 && this.items == that.items
                 && this.placeBlock == that.placeBlock
                 && this.placeMeta == that.placeMeta;

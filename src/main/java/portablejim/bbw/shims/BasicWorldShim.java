@@ -1,17 +1,20 @@
 package portablejim.bbw.shims;
 
 import java.util.List;
+
 import net.minecraft.block.Block;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.init.Blocks;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.world.World;
+
 import portablejim.bbw.basics.Point3d;
 
 /**
  * Wrap a world to provide basic functions.
  */
 public class BasicWorldShim implements IWorldShim {
+
     private World world;
 
     public BasicWorldShim(World world) {

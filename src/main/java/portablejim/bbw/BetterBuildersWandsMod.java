@@ -1,26 +1,18 @@
 package portablejim.bbw;
 
-import cpw.mods.fml.common.Loader;
-import cpw.mods.fml.common.Mod;
-import cpw.mods.fml.common.Mod.EventHandler;
-import cpw.mods.fml.common.SidedProxy;
-import cpw.mods.fml.common.event.FMLInitializationEvent;
-import cpw.mods.fml.common.event.FMLPreInitializationEvent;
-import cpw.mods.fml.common.event.FMLServerStartingEvent;
-import cpw.mods.fml.common.network.NetworkRegistry;
-import cpw.mods.fml.common.network.simpleimpl.SimpleNetworkWrapper;
-import cpw.mods.fml.common.registry.GameRegistry;
-import cpw.mods.fml.relauncher.Side;
 import java.util.Arrays;
+
 import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.ShapelessRecipes;
 import net.minecraftforge.oredict.ShapedOreRecipe;
+
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.simple.SimpleLogger;
 import org.apache.logging.log4j.util.PropertiesUtil;
+
 import portablejim.bbw.core.ConfigValues;
 import portablejim.bbw.core.OopsCommand;
 import portablejim.bbw.core.conversion.CustomMappingManager;
@@ -32,12 +24,24 @@ import portablejim.bbw.core.wands.RestrictedWand;
 import portablejim.bbw.core.wands.UnbreakingWand;
 import portablejim.bbw.network.PacketWandActivate;
 import portablejim.bbw.proxy.IProxy;
+import cpw.mods.fml.common.Loader;
+import cpw.mods.fml.common.Mod;
+import cpw.mods.fml.common.Mod.EventHandler;
+import cpw.mods.fml.common.SidedProxy;
+import cpw.mods.fml.common.event.FMLInitializationEvent;
+import cpw.mods.fml.common.event.FMLPreInitializationEvent;
+import cpw.mods.fml.common.event.FMLServerStartingEvent;
+import cpw.mods.fml.common.network.NetworkRegistry;
+import cpw.mods.fml.common.network.simpleimpl.SimpleNetworkWrapper;
+import cpw.mods.fml.common.registry.GameRegistry;
+import cpw.mods.fml.relauncher.Side;
 
 /**
  * Author: Portablejim
  */
 @Mod(modid = BetterBuildersWandsMod.MODID)
 public class BetterBuildersWandsMod {
+
     public static final String MODID = "betterbuilderswands";
     public static final String LANGID = "bbw";
 
@@ -91,7 +95,9 @@ public class BetterBuildersWandsMod {
         configValues.loadConfigFile();
 
         itemDiamondWand = new ItemUnrestrictedWand(
-                new RestrictedWand(Item.ToolMaterial.EMERALD.getMaxUses()), "Unrestricted", "Diamond");
+                new RestrictedWand(Item.ToolMaterial.EMERALD.getMaxUses()),
+                "Unrestricted",
+                "Diamond");
         itemDiamondWand.setMaxDamage(configValues.DIAMOND_WAND_DURABILITY);
         GameRegistry.registerItem(itemDiamondWand, "wandDiamond");
         networkWrapper = NetworkRegistry.INSTANCE.newSimpleChannel("bbwands");
@@ -102,8 +108,11 @@ public class BetterBuildersWandsMod {
 
         mappingManager.loadConfig(configValues.OVERRIDES_RECIPES);
 
-        /*mappingManager.setMapping(new CustomMapping(Blocks.lapis_ore, 0, new ItemStack(Blocks.lapis_ore, 1, 4), Blocks.lapis_ore, 0));
-        mappingManager.setMapping(new CustomMapping(Blocks.lit_redstone_ore, 0, new ItemStack(Blocks.redstone_ore, 1, 0), Blocks.lit_redstone_ore, 0));*/
+        /*
+         * mappingManager.setMapping(new CustomMapping(Blocks.lapis_ore, 0, new ItemStack(Blocks.lapis_ore, 1, 4),
+         * Blocks.lapis_ore, 0)); mappingManager.setMapping(new CustomMapping(Blocks.lit_redstone_ore, 0, new
+         * ItemStack(Blocks.redstone_ore, 1, 0), Blocks.lit_redstone_ore, 0));
+         */
     }
 
     private ItemStack newWand(int damage) {
@@ -114,15 +123,36 @@ public class BetterBuildersWandsMod {
     public void init(FMLInitializationEvent event) {
         proxy.RegisterEvents();
 
-        if (configValues.ENABLE_STONE_WAND)
-            GameRegistry.addRecipe(new ShapedOreRecipe(
-                    BetterBuildersWandsMod.itemStoneWand, "  H", " S ", "S  ", 'S', "stickWood", 'H', "cobblestone"));
-        if (configValues.ENABLE_IRON_WAND)
-            GameRegistry.addRecipe(new ShapedOreRecipe(
-                    BetterBuildersWandsMod.itemIronWand, "  H", " S ", "S  ", 'S', "stickWood", 'H', "ingotIron"));
-        if (configValues.ENABLE_DIAMOND_WAND)
-            GameRegistry.addRecipe(new ShapedOreRecipe(
-                    BetterBuildersWandsMod.itemDiamondWand, "  H", " S ", "S  ", 'S', "stickWood", 'H', "gemDiamond"));
+        if (configValues.ENABLE_STONE_WAND) GameRegistry.addRecipe(
+                new ShapedOreRecipe(
+                        BetterBuildersWandsMod.itemStoneWand,
+                        "  H",
+                        " S ",
+                        "S  ",
+                        'S',
+                        "stickWood",
+                        'H',
+                        "cobblestone"));
+        if (configValues.ENABLE_IRON_WAND) GameRegistry.addRecipe(
+                new ShapedOreRecipe(
+                        BetterBuildersWandsMod.itemIronWand,
+                        "  H",
+                        " S ",
+                        "S  ",
+                        'S',
+                        "stickWood",
+                        'H',
+                        "ingotIron"));
+        if (configValues.ENABLE_DIAMOND_WAND) GameRegistry.addRecipe(
+                new ShapedOreRecipe(
+                        BetterBuildersWandsMod.itemDiamondWand,
+                        "  H",
+                        " S ",
+                        "S  ",
+                        'S',
+                        "stickWood",
+                        'H',
+                        "gemDiamond"));
 
         boolean EXTRA_UTILS_RECIPES = !configValues.NO_EXTRA_UTILS_RECIPES;
         if (Loader.isModLoaded("ExtraUtilities") && EXTRA_UTILS_RECIPES) {

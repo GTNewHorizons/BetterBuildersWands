@@ -1,18 +1,21 @@
 package portablejim.bbw.core.client;
 
+import net.minecraft.client.settings.KeyBinding;
+
+import org.lwjgl.input.Keyboard;
+
+import portablejim.bbw.BetterBuildersWandsMod;
+import portablejim.bbw.network.PacketWandActivate;
 import cpw.mods.fml.client.registry.ClientRegistry;
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import cpw.mods.fml.common.gameevent.InputEvent;
-import net.minecraft.client.settings.KeyBinding;
-import org.lwjgl.input.Keyboard;
-import portablejim.bbw.BetterBuildersWandsMod;
-import portablejim.bbw.network.PacketWandActivate;
 
 /**
  * Created by james on 16/10/15.
  */
 public class KeyEvents {
+
     public KeyBinding keyBinding = new KeyBinding("bbw.key.mode", Keyboard.KEY_NONE, "bbw.key.category");
     public KeyBinding keyBindingFluid = new KeyBinding("bbw.key.fluidmode", Keyboard.KEY_NONE, "bbw.key.category");
 

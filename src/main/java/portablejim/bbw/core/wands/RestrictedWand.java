@@ -7,6 +7,7 @@ import net.minecraft.item.ItemStack;
  * Simple wand that doesn't break / have durability.
  */
 public class RestrictedWand implements IWand {
+
     protected int blocklimit = 0;
 
     public RestrictedWand(int limit) {

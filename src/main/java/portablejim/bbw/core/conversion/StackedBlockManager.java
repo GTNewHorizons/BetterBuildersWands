@@ -3,8 +3,10 @@ package portablejim.bbw.core.conversion;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.HashMap;
+
 import net.minecraft.block.Block;
 import net.minecraft.item.ItemStack;
+
 import portablejim.bbw.BetterBuildersWandsMod;
 import portablejim.bbw.basics.Point3d;
 import portablejim.bbw.shims.IWorldShim;
@@ -13,6 +15,7 @@ import portablejim.bbw.shims.IWorldShim;
  * Manage calling getStackedBlock(int) using reflection.
  */
 public class StackedBlockManager {
+
     private HashMap<String, ItemStack> cache;
     Method getStackedBlockMethod;
     String getStackedBlockMethodName;
@@ -27,8 +30,8 @@ public class StackedBlockManager {
                 getStackedBlockMethod = Block.class.getDeclaredMethod(getStackedBlockMethodName, int.class);
             }
             getStackedBlockMethod.setAccessible(true);
-            BetterBuildersWandsMod.logger.info(
-                    "Access transform success createStackedBlock (" + getStackedBlockMethodName + ").");
+            BetterBuildersWandsMod.logger
+                    .info("Access transform success createStackedBlock (" + getStackedBlockMethodName + ").");
         } catch (NoSuchMethodException e) {
             BetterBuildersWandsMod.logger.error("No Method Block.getStackedBlock(int)!");
         }

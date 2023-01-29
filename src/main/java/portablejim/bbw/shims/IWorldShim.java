@@ -3,12 +3,14 @@ package portablejim.bbw.shims;
 import net.minecraft.block.Block;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.world.World;
+
 import portablejim.bbw.basics.Point3d;
 
 /**
  * Wrap functions to do with the world.
  */
 public interface IWorldShim {
+
     Block getBlock(Point3d point);
 
     boolean blockIsAir(Point3d point);

@@ -4,6 +4,7 @@ package portablejim.bbw.basics;
  * Enum for the directions that the wands can extend.
  */
 public enum EnumLock {
+
     NORTHSOUTH(1),
     VERTICAL(2),
     VERTICALEASTWEST(3),
@@ -23,7 +24,7 @@ public enum EnumLock {
     }
 
     public static EnumLock fromMask(int inputMask) {
-        EnumLock locks[] = {NORTHSOUTH, VERTICAL, VERTICALEASTWEST, EASTWEST, HORIZONTAL, VERTICALNORTHSOUTH, NOLOCK};
+        EnumLock locks[] = { NORTHSOUTH, VERTICAL, VERTICALEASTWEST, EASTWEST, HORIZONTAL, VERTICALNORTHSOUTH, NOLOCK };
 
         int safeMask = inputMask & 7;
         return locks[safeMask - 1];

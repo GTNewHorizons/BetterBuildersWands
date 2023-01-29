@@ -7,6 +7,7 @@ import net.minecraft.item.ItemStack;
  * Simple wand that doesn't break / have durability.
  */
 public class UnbreakingWand implements IWand {
+
     @Override
     public int getMaxBlocks(ItemStack itemStack) {
         if (itemStack.getItemDamage() <= 0) {
