@@ -13,17 +13,6 @@ import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.simple.SimpleLogger;
 import org.apache.logging.log4j.util.PropertiesUtil;
 
-import portablejim.bbw.core.ConfigValues;
-import portablejim.bbw.core.OopsCommand;
-import portablejim.bbw.core.conversion.CustomMappingManager;
-import portablejim.bbw.core.conversion.StackedBlockManager;
-import portablejim.bbw.core.items.ItemRestrictedWandAdvanced;
-import portablejim.bbw.core.items.ItemRestrictedWandBasic;
-import portablejim.bbw.core.items.ItemUnrestrictedWand;
-import portablejim.bbw.core.wands.RestrictedWand;
-import portablejim.bbw.core.wands.UnbreakingWand;
-import portablejim.bbw.network.PacketWandActivate;
-import portablejim.bbw.proxy.IProxy;
 import cpw.mods.fml.common.Loader;
 import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.Mod.EventHandler;
@@ -35,14 +24,27 @@ import cpw.mods.fml.common.network.NetworkRegistry;
 import cpw.mods.fml.common.network.simpleimpl.SimpleNetworkWrapper;
 import cpw.mods.fml.common.registry.GameRegistry;
 import cpw.mods.fml.relauncher.Side;
+import portablejim.bbw.core.ConfigValues;
+import portablejim.bbw.core.OopsCommand;
+import portablejim.bbw.core.conversion.CustomMappingManager;
+import portablejim.bbw.core.conversion.StackedBlockManager;
+import portablejim.bbw.core.items.ItemRestrictedWandAdvanced;
+import portablejim.bbw.core.items.ItemRestrictedWandBasic;
+import portablejim.bbw.core.items.ItemUnrestrictedWand;
+import portablejim.bbw.core.wands.RestrictedWand;
+import portablejim.bbw.core.wands.UnbreakingWand;
+import portablejim.bbw.network.PacketWandActivate;
+import portablejim.bbw.proxy.IProxy;
 
 /**
  * Author: Portablejim
  */
-@Mod(modid = BetterBuildersWandsMod.MODID)
+@Mod(modid = BetterBuildersWandsMod.MODID, version = BetterBuildersWandsMod.VERSION)
 public class BetterBuildersWandsMod {
 
     public static final String MODID = "betterbuilderswands";
+
+    public static final String VERSION = "GRADLETOKEN_VERSION";
     public static final String LANGID = "bbw";
 
     @Mod.Instance
