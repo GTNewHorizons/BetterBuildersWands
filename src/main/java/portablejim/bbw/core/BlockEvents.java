@@ -12,6 +12,7 @@ import net.minecraftforge.common.util.ForgeDirection;
 
 import org.lwjgl.opengl.GL11;
 
+import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import portablejim.bbw.basics.Point3d;
 import portablejim.bbw.core.items.IWandItem;
 import portablejim.bbw.core.wands.IWand;
@@ -20,7 +21,6 @@ import portablejim.bbw.shims.BasicWorldShim;
 import portablejim.bbw.shims.CreativePlayerShim;
 import portablejim.bbw.shims.IPlayerShim;
 import portablejim.bbw.shims.IWorldShim;
-import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 
 /**
  * Events for supporting wands.

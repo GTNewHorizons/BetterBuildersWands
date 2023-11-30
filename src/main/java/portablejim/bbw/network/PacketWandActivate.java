@@ -15,11 +15,11 @@ import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ChatComponentTranslation;
 
-import portablejim.bbw.BetterBuildersWandsMod;
-import portablejim.bbw.core.items.IWandItem;
 import cpw.mods.fml.common.network.simpleimpl.IMessage;
 import cpw.mods.fml.common.network.simpleimpl.MessageContext;
 import io.netty.buffer.ByteBuf;
+import portablejim.bbw.BetterBuildersWandsMod;
+import portablejim.bbw.core.items.IWandItem;
 
 /**
  * Packet the client sends to the server to tell it to activate or deactivate for the player that sent it.
