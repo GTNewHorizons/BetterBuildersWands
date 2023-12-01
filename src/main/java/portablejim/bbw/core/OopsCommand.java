@@ -11,10 +11,10 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.common.util.Constants;
 
+import cpw.mods.fml.common.registry.GameRegistry;
 import portablejim.bbw.BetterBuildersWandsMod;
 import portablejim.bbw.basics.Point3d;
 import portablejim.bbw.core.items.IWandItem;
-import cpw.mods.fml.common.registry.GameRegistry;
 
 /**
  * /wandOops command.

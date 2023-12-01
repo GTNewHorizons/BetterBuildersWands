@@ -4,12 +4,12 @@ import net.minecraft.client.settings.KeyBinding;
 
 import org.lwjgl.input.Keyboard;
 
-import portablejim.bbw.BetterBuildersWandsMod;
-import portablejim.bbw.network.PacketWandActivate;
 import cpw.mods.fml.client.registry.ClientRegistry;
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import cpw.mods.fml.common.gameevent.InputEvent;
+import portablejim.bbw.BetterBuildersWandsMod;
+import portablejim.bbw.network.PacketWandActivate;
 
 /**
  * Created by james on 16/10/15.

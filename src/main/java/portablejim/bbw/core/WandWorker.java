@@ -13,6 +13,7 @@ import net.minecraft.util.AxisAlignedBB;
 import net.minecraftforge.common.util.ForgeDirection;
 import net.minecraftforge.fluids.IFluidBlock;
 
+import cpw.mods.fml.common.FMLLog;
 import portablejim.bbw.BetterBuildersWandsMod;
 import portablejim.bbw.basics.EnumFluidLock;
 import portablejim.bbw.basics.EnumLock;
@@ -21,7 +22,6 @@ import portablejim.bbw.core.conversion.CustomMapping;
 import portablejim.bbw.core.wands.IWand;
 import portablejim.bbw.shims.IPlayerShim;
 import portablejim.bbw.shims.IWorldShim;
-import cpw.mods.fml.common.FMLLog;
 
 /**
  * Does the heavy work of working out the blocks to place and places them.

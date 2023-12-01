@@ -8,8 +8,8 @@ import net.minecraft.block.Block;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 
-import portablejim.bbw.BetterBuildersWandsMod;
 import cpw.mods.fml.common.registry.GameRegistry;
+import portablejim.bbw.BetterBuildersWandsMod;
 
 /**
  * Handle the mappings to force blocks to build with certain materials.
