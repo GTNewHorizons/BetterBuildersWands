@@ -1,7 +1,7 @@
 // Add your dependencies here
 
 dependencies {
-    compileOnly("com.github.GTNewHorizons:Botania:1.10.3-GTNH:api") {
+    compileOnly("com.github.GTNewHorizons:Botania:1.10.10-GTNH:api") {
         transitive = false
     }
 }
