@@ -68,11 +68,14 @@ public class BlockEvents {
                             AxisAlignedBB boundingBox = AxisAlignedBB
                                     .getBoundingBox(block.x, block.y, block.z, block.x + 1, block.y + 1, block.z + 1)
                                     .contract(0.005, 0.005, 0.005);
+                            double interpolatedX = event.player.lastTickPosX
+                                    + (event.player.posX - event.player.lastTickPosX) * event.partialTicks;
+                            double interpolatedY = event.player.lastTickPosY
+                                    + (event.player.posY - event.player.lastTickPosY) * event.partialTicks;
+                            double interpolatedZ = event.player.lastTickPosZ
+                                    + (event.player.posZ - event.player.lastTickPosZ) * event.partialTicks;
                             RenderGlobal.drawOutlinedBoundingBox(
-                                    boundingBox.getOffsetBoundingBox(
-                                            -event.player.posX,
-                                            -event.player.posY,
-                                            -event.player.posZ),
+                                    boundingBox.getOffsetBoundingBox(-interpolatedX, -interpolatedY, -interpolatedZ),
                                     0xC0C0C0);
                         }
                         GL11.glEnable(GL11.GL_TEXTURE_2D);
