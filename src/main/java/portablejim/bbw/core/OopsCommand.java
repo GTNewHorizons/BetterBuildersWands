@@ -2,13 +2,14 @@ package portablejim.bbw.core;
 
 import java.util.ArrayList;
 
+import net.minecraft.block.Block;
 import net.minecraft.command.CommandBase;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.command.WrongUsageException;
-import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.world.World;
 import net.minecraftforge.common.util.Constants;
 
 import cpw.mods.fml.common.registry.GameRegistry;
@@ -39,15 +40,9 @@ public class OopsCommand extends CommandBase {
             if (currentItemstack != null && currentItemstack.getItem() != null
                     && currentItemstack.getItem() instanceof IWandItem) {
                 NBTTagCompound tagComponent = currentItemstack.getTagCompound();
-
-                NBTTagCompound bbwCompound;
                 if (tagComponent != null && tagComponent.hasKey("bbw", Constants.NBT.TAG_COMPOUND)
                         && tagComponent.getCompoundTag("bbw").hasKey("lastPlaced", Constants.NBT.TAG_INT_ARRAY)) {
-                    bbwCompound = tagComponent.getCompoundTag("bbw");
-                    ArrayList<Point3d> pointList = unpackNbt(bbwCompound.getIntArray("lastPlaced"));
-                    for (Point3d point : pointList) {
-                        player.getEntityWorld().setBlockToAir(point.x, point.y, point.z);
-                    }
+                    NBTTagCompound bbwCompound = tagComponent.getCompoundTag("bbw");
                     if (bbwCompound.hasKey("lastBlock", Constants.NBT.TAG_STRING)
                             && bbwCompound.hasKey("lastPerBlock", Constants.NBT.TAG_INT)) {
                         GameRegistry.UniqueIdentifier lastBlock = new GameRegistry.UniqueIdentifier(
@@ -55,34 +50,18 @@ public class OopsCommand extends CommandBase {
                         int damageValue = bbwCompound.getInteger("lastDamage");
                         ItemStack itemStack = GameRegistry.findItemStack(lastBlock.modId, lastBlock.name, 1);
                         itemStack.setItemDamage(damageValue);
-                        int count = bbwCompound.getInteger("lastPerBlock") * pointList.size();
-                        int stackSize = itemStack.getMaxStackSize();
-                        int fullStacks = count / stackSize;
-                        for (int i = 0; i < fullStacks; i++) {
-                            ItemStack newStack = itemStack.copy();
-                            newStack.stackSize = stackSize;
-                            player.worldObj.spawnEntityInWorld(
-                                    new EntityItem(
-                                            player.getEntityWorld(),
-                                            player.posX,
-                                            player.posY,
-                                            player.posZ,
-                                            newStack));
+                        Block block = Block.getBlockFromItem(itemStack.getItem());
+                        World world = player.worldObj;
+                        ArrayList<Point3d> pointList = unpackNbt(bbwCompound.getIntArray("lastPlaced"));
+                        int count = 0;
+                        for (Point3d point : pointList) {
+                            if (world.getBlock(point.x, point.y, point.z) == block) {
+                                world.setBlockToAir(point.x, point.y, point.z);
+                                count++;
+                            }
                         }
-                        ItemStack finalStack = itemStack.copy();
-                        finalStack.stackSize = count % stackSize;
-                        player.worldObj.spawnEntityInWorld(
-                                new EntityItem(
-                                        player.getEntityWorld(),
-                                        player.posX,
-                                        player.posY,
-                                        player.posZ,
-                                        finalStack));
 
-                        bbwCompound.removeTag("lastPlaced");
-                        bbwCompound.removeTag("lastBlock");
-                        bbwCompound.removeTag("lastDamage");
-                        bbwCompound.removeTag("lastPerBlock");
+                        dropItems(bbwCompound, player, itemStack, count);
                     }
                 } else {
                     throw new WrongUsageException(BetterBuildersWandsMod.LANGID + ".chat.error.noundo");
@@ -96,13 +75,33 @@ public class OopsCommand extends CommandBase {
     }
 
     protected ArrayList<Point3d> unpackNbt(int[] placedBlocks) {
-        ArrayList<Point3d> output = new ArrayList<Point3d>();
+        ArrayList<Point3d> output = new ArrayList<>();
         int countPoints = placedBlocks.length / 3;
         for (int i = 0; i < countPoints * 3; i += 3) {
             output.add(new Point3d(placedBlocks[i], placedBlocks[i + 1], placedBlocks[i + 2]));
         }
 
         return output;
+    }
+
+    private void dropItems(NBTTagCompound bbwCompound, EntityPlayerMP player, ItemStack itemStack, int amount) {
+        if (amount <= 0) return;
+        int count = bbwCompound.getInteger("lastPerBlock") * amount;
+        int stackSize = itemStack.getMaxStackSize();
+        int fullStacks = count / stackSize;
+        for (int i = 0; i < fullStacks; i++) {
+            ItemStack newStack = itemStack.copy();
+            newStack.stackSize = stackSize;
+            player.entityDropItem(newStack, 0.0F);
+        }
+        ItemStack finalStack = itemStack.copy();
+        finalStack.stackSize = count % stackSize;
+        player.entityDropItem(finalStack, 0.0F);
+
+        bbwCompound.removeTag("lastPlaced");
+        bbwCompound.removeTag("lastBlock");
+        bbwCompound.removeTag("lastDamage");
+        bbwCompound.removeTag("lastPerBlock");
     }
 
     @Override
