@@ -6,6 +6,7 @@ import net.minecraft.block.Block;
 import net.minecraft.command.CommandBase;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.command.WrongUsageException;
+import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -55,7 +56,8 @@ public class OopsCommand extends CommandBase {
                         ArrayList<Point3d> pointList = unpackNbt(bbwCompound.getIntArray("lastPlaced"));
                         int count = 0;
                         for (Point3d point : pointList) {
-                            if (world.getBlock(point.x, point.y, point.z) == block) {
+                            if (world.getBlock(point.x, point.y, point.z) == block
+                                    && world.getBlockMetadata(point.x, point.y, point.z) == damageValue) {
                                 world.setBlockToAir(point.x, point.y, point.z);
                                 count++;
                             }
@@ -92,12 +94,13 @@ public class OopsCommand extends CommandBase {
         for (int i = 0; i < fullStacks; i++) {
             ItemStack newStack = itemStack.copy();
             newStack.stackSize = stackSize;
-            player.entityDropItem(newStack, 0.0F);
+            player.worldObj.spawnEntityInWorld(
+                    new EntityItem(player.getEntityWorld(), player.posX, player.posY, player.posZ, newStack));
         }
         ItemStack finalStack = itemStack.copy();
         finalStack.stackSize = count % stackSize;
-        player.entityDropItem(finalStack, 0.0F);
-
+        player.worldObj.spawnEntityInWorld(
+                new EntityItem(player.getEntityWorld(), player.posX, player.posY, player.posZ, finalStack));
         bbwCompound.removeTag("lastPlaced");
         bbwCompound.removeTag("lastBlock");
         bbwCompound.removeTag("lastDamage");
