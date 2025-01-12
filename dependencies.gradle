@@ -4,4 +4,7 @@ dependencies {
     compileOnly("com.github.GTNewHorizons:Botania:1.11.1-GTNH:api") {
         transitive = false
     }
+    compileOnly("com.github.GTNewHorizons:ArchitectureCraft:1.10.2") {
+        transitive = false
+    }
 }
