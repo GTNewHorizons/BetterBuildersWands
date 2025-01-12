@@ -2,6 +2,7 @@ package portablejim.bbw.core;
 
 import java.util.LinkedList;
 
+import net.minecraft.block.Block;
 import net.minecraft.client.renderer.RenderGlobal;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
@@ -13,7 +14,9 @@ import net.minecraftforge.common.util.ForgeDirection;
 import org.lwjgl.opengl.GL11;
 
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
+import portablejim.bbw.BetterBuildersWandsMod;
 import portablejim.bbw.basics.Point3d;
+import portablejim.bbw.core.conversion.CustomMapping;
 import portablejim.bbw.core.items.IWandItem;
 import portablejim.bbw.core.wands.IWand;
 import portablejim.bbw.shims.BasicPlayerShim;
@@ -50,7 +53,15 @@ public class BlockEvents {
                 ItemStack sourceItems = worker.getProperItemStack(worldShim, playerShim, clickedPos);
 
                 if (sourceItems != null && sourceItems.getItem() instanceof ItemBlock) {
-                    int numBlocks = Math.min(wand.getMaxBlocks(event.currentItem), playerShim.countItems(sourceItems));
+                    Block targetedBlock = worldShim.getBlock(clickedPos);
+                    int meta = worldShim.getMetadata(clickedPos);
+                    CustomMapping customMapping = BetterBuildersWandsMod.instance.mappingManager
+                            .getMapping(targetedBlock, meta);
+                    int numBlocks = Math.min(
+                            wand.getMaxBlocks(event.currentItem),
+                            playerShim.countItems(
+                                    sourceItems,
+                                    customMapping != null && customMapping.shouldCopyTileNBT()));
 
                     LinkedList<Point3d> blocks = worker.getBlockPositionList(
                             clickedPos,
@@ -58,7 +69,8 @@ public class BlockEvents {
                             numBlocks,
                             wandItem.getMode(event.currentItem),
                             wandItem.getFaceLock(event.currentItem),
-                            wandItem.getFluidMode(event.currentItem));
+                            wandItem.getFluidMode(event.currentItem),
+                            customMapping != null && customMapping.shouldCopyTileNBT());
                     if (blocks.size() > 0) {
                         GL11.glDisable(GL11.GL_TEXTURE_2D);
                         GL11.glEnable(GL11.GL_BLEND);

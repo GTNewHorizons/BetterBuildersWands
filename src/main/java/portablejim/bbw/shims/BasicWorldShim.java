@@ -5,6 +5,8 @@ import java.util.List;
 import net.minecraft.block.Block;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.init.Blocks;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.world.World;
 
@@ -28,6 +30,11 @@ public class BasicWorldShim implements IWorldShim {
             return world.getBlock(point.x, point.y, point.z);
         }
         return null;
+    }
+
+    @Override
+    public TileEntity getTile(Point3d point) {
+        return world.getTileEntity(point.x, point.y, point.z);
     }
 
     @Override
@@ -86,7 +93,22 @@ public class BasicWorldShim implements IWorldShim {
     }
 
     @Override
-    public boolean setBlock(Point3d position, Block block, int meta) {
-        return world.setBlock(position.x, position.y, position.z, block, meta, 3);
+    public boolean setBlock(Point3d originalPosition, Point3d position, Block block, int meta,
+            boolean shouldCopyTileNBT) {
+        boolean retVal = world.setBlock(position.x, position.y, position.z, block, meta, 3);
+        if (shouldCopyTileNBT) {
+            TileEntity oldTileEntity = getTile(originalPosition);
+            TileEntity newTileEntity = getTile(position);
+            if (oldTileEntity != null && newTileEntity != null) {
+                NBTTagCompound nbt = new NBTTagCompound();
+                oldTileEntity.writeToNBT(nbt);
+                newTileEntity.readFromNBT(nbt);
+                // nbt contains position, so reset to correct position afterwards
+                newTileEntity.xCoord = position.x;
+                newTileEntity.yCoord = position.y;
+                newTileEntity.zCoord = position.z;
+            }
+        }
+        return retVal;
     }
 }

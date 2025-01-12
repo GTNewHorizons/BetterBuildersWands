@@ -14,12 +14,12 @@ public class CreativePlayerShim extends BasicPlayerShim implements IPlayerShim {
     }
 
     @Override
-    public int countItems(ItemStack itemStack) {
+    public int countItems(ItemStack itemStack, boolean isNBTSensitive) {
         return Integer.MAX_VALUE;
     }
 
     @Override
-    public boolean useItem(ItemStack itemStack) {
+    public boolean useItem(ItemStack itemStack, boolean isNBTSensitive) {
         return true;
     }
 

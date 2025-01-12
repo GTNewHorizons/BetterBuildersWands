@@ -22,6 +22,7 @@ import portablejim.bbw.basics.EnumFluidLock;
 import portablejim.bbw.basics.EnumLock;
 import portablejim.bbw.basics.Point3d;
 import portablejim.bbw.core.WandWorker;
+import portablejim.bbw.core.conversion.CustomMapping;
 import portablejim.bbw.core.wands.IWand;
 import portablejim.bbw.shims.BasicPlayerShim;
 import portablejim.bbw.shims.BasicWorldShim;
@@ -70,7 +71,11 @@ public abstract class ItemBasicWand extends Item implements IWandItem {
             ItemStack sourceItems = worker.getProperItemStack(worldShim, playerShim, clickedPos);
 
             if (sourceItems != null && sourceItems.getItem() instanceof ItemBlock) {
-                int numBlocks = Math.min(wand.getMaxBlocks(itemstack), playerShim.countItems(sourceItems));
+                CustomMapping customMapping = BetterBuildersWandsMod.instance.mappingManager
+                        .getMapping(worldShim.getBlock(clickedPos), worldShim.getMetadata(clickedPos));
+                int numBlocks = Math.min(
+                        wand.getMaxBlocks(itemstack),
+                        playerShim.countItems(sourceItems, customMapping != null && customMapping.shouldCopyTileNBT()));
 
                 // FMLLog.info("Max blocks: %d (%d|%d", numBlocks, this.wand.getMaxBlocks(itemstack),
                 // playerShim.countItems(sourceItems));
@@ -80,7 +85,8 @@ public abstract class ItemBasicWand extends Item implements IWandItem {
                         numBlocks,
                         getMode(itemstack),
                         getFaceLock(itemstack),
-                        getFluidMode(itemstack));
+                        getFluidMode(itemstack),
+                        customMapping != null && customMapping.shouldCopyTileNBT());
 
                 ArrayList<Point3d> placedBlocks = worker
                         .placeBlocks(itemstack, blocks, clickedPos, sourceItems, side, hitX, hitY, hitZ);

@@ -1,6 +1,7 @@
 package portablejim.bbw.shims;
 
 import net.minecraft.block.Block;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.world.World;
 
@@ -12,6 +13,8 @@ import portablejim.bbw.basics.Point3d;
 public interface IWorldShim {
 
     Block getBlock(Point3d point);
+
+    TileEntity getTile(Point3d point);
 
     boolean blockIsAir(Point3d point);
 
@@ -27,5 +30,6 @@ public interface IWorldShim {
 
     void playPlaceAtBlock(Point3d position, Block blockType);
 
-    boolean setBlock(Point3d position, Block placeBlock, int placeMeta);
+    boolean setBlock(Point3d originalPosition, Point3d position, Block placeBlock, int placeMeta,
+            boolean shouldCopyNBT);
 }
