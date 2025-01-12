@@ -135,24 +135,25 @@ public class WandWorker {
                         || (placeDirection != ForgeDirection.EAST && placeDirection != ForgeDirection.WEST))) {
             candidates.add(startingPoint);
         }
+        AxisAlignedBB blockBB = targetBlock
+                .getCollisionBoundingBoxFromPool(world.getWorld(), blockLookedAt.x, blockLookedAt.y, blockLookedAt.z);
         while (candidates.size() > 0 && toPlace.size() < maxBlocks) {
             Point3d currentCandidate = candidates.removeFirst();
 
             Point3d supportingPoint = currentCandidate.move(placeDirection.getOpposite());
             Block candidateSupportingBlock = world.getBlock(supportingPoint);
             int candidateSupportingMeta = world.getMetadata(supportingPoint);
-            AxisAlignedBB blockBB = targetBlock.getCollisionBoundingBoxFromPool(
-                    world.getWorld(),
-                    currentCandidate.x,
-                    currentCandidate.y,
-                    currentCandidate.z);
+            AxisAlignedBB candidateBB = blockBB.copy().offset(
+                    currentCandidate.x - blockLookedAt.x,
+                    currentCandidate.y - blockLookedAt.y,
+                    currentCandidate.z - blockLookedAt.z);
             if (shouldContinue(
                     currentCandidate,
                     targetBlock,
                     targetMetadata,
                     candidateSupportingBlock,
                     candidateSupportingMeta,
-                    blockBB,
+                    candidateBB,
                     fluidLock) && allCandidates.add(currentCandidate)) {
                 toPlace.add(currentCandidate);
 
