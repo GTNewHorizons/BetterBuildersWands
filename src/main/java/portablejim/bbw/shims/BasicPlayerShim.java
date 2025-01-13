@@ -60,7 +60,7 @@ public class BasicPlayerShim implements IPlayerShim {
 
         for (ItemStack inventoryStack : player.inventory.mainInventory) {
             if (inventoryStack != null && itemStack.isItemEqual(inventoryStack)
-                    && (ItemStack.areItemStackTagsEqual(itemStack, inventoryStack) || !isNBTSensitive)) {
+                    && (!isNBTSensitive || ItemStack.areItemStackTagsEqual(itemStack, inventoryStack))) {
                 total += Math.max(0, inventoryStack.stackSize);
             } else
                 if (providersEnabled && inventoryStack != null && inventoryStack.getItem() instanceof IBlockProvider) {
@@ -86,7 +86,7 @@ public class BasicPlayerShim implements IPlayerShim {
         for (int i = player.inventory.mainInventory.length - 1; i >= 0; i--) {
             ItemStack inventoryStack = player.inventory.mainInventory[i];
             if (inventoryStack != null && itemStack.isItemEqual(inventoryStack)
-                    && (ItemStack.areItemStackTagsEqual(itemStack, inventoryStack) || !isNBTSensitive)) {
+                    && (!isNBTSensitive || ItemStack.areItemStackTagsEqual(itemStack, inventoryStack))) {
                 if (inventoryStack.stackSize < toUse) {
                     inventoryStack.stackSize = 0;
                     toUse -= inventoryStack.stackSize;

@@ -180,7 +180,7 @@ public class BetterBuildersWandsMod {
         GameRegistry.addRecipe(new ShapelessRecipes(newWand(14), Arrays.asList(newWand(13), newWand(13))));
 
         if (Loader.isModLoaded("ArchitectureCraft")) {
-            mappingManager.setMapping(new ArchitectureCraftCustomMapping());
+            ArchitectureCraftCustomMapping.register();
         }
     }
 
