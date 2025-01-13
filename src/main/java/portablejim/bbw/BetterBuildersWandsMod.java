@@ -24,6 +24,7 @@ import cpw.mods.fml.common.network.NetworkRegistry;
 import cpw.mods.fml.common.network.simpleimpl.SimpleNetworkWrapper;
 import cpw.mods.fml.common.registry.GameRegistry;
 import cpw.mods.fml.relauncher.Side;
+import portablejim.bbw.compat.architecturecraft.ArchitectureCraftCustomMapping;
 import portablejim.bbw.core.ConfigValues;
 import portablejim.bbw.core.OopsCommand;
 import portablejim.bbw.core.conversion.CustomMappingManager;
@@ -109,7 +110,6 @@ public class BetterBuildersWandsMod {
         mappingManager = new CustomMappingManager();
 
         mappingManager.loadConfig(configValues.OVERRIDES_RECIPES);
-
         /*
          * mappingManager.setMapping(new CustomMapping(Blocks.lapis_ore, 0, new ItemStack(Blocks.lapis_ore, 1, 4),
          * Blocks.lapis_ore, 0)); mappingManager.setMapping(new CustomMapping(Blocks.lit_redstone_ore, 0, new
@@ -178,6 +178,10 @@ public class BetterBuildersWandsMod {
         itemUnbreakableWand.addSubMeta(14);
         GameRegistry.addRecipe(new ShapelessRecipes(newWand(13), Arrays.asList(newWand(12), newWand(12))));
         GameRegistry.addRecipe(new ShapelessRecipes(newWand(14), Arrays.asList(newWand(13), newWand(13))));
+
+        if (Loader.isModLoaded("ArchitectureCraft")) {
+            ArchitectureCraftCustomMapping.register();
+        }
     }
 
     @EventHandler

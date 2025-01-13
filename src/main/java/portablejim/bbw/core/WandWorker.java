@@ -9,6 +9,8 @@ import net.minecraft.block.Block;
 import net.minecraft.block.BlockLiquid;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraftforge.common.util.ForgeDirection;
 import net.minecraftforge.fluids.IFluidBlock;
@@ -44,10 +46,14 @@ public class WandWorker {
     public ItemStack getProperItemStack(IWorldShim world, IPlayerShim player, Point3d blockPos) {
         Block block = world.getBlock(blockPos);
         int meta = world.getMetadata(blockPos);
+        CustomMapping customMapping = BetterBuildersWandsMod.instance.mappingManager.getMapping(block, meta);
+        if (customMapping != null) {
+            return customMapping.getItems(world, blockPos);
+        }
         String blockString = String.format("%s/%s", Block.blockRegistry.getNameForObject(block), meta);
         if (!BetterBuildersWandsMod.instance.configValues.HARD_BLACKLIST_SET.contains(blockString)) {
             ItemStack exactItemstack = new ItemStack(block, 1, meta);
-            if (Item.getItemFromBlock(block) != null && player.countItems(exactItemstack) > 0) {
+            if (Item.getItemFromBlock(block) != null && player.countItems(exactItemstack, false) > 0) {
                 return exactItemstack;
             }
             return getEquivalentItemStack(blockPos);
@@ -60,30 +66,23 @@ public class WandWorker {
         int meta = world.getMetadata(blockPos);
         // ArrayList<ItemStack> items = new ArrayList<ItemStack>();
         ItemStack stack = null;
-        CustomMapping customMapping = BetterBuildersWandsMod.instance.mappingManager.getMapping(block, meta);
         String blockString = String.format("%s/%s", Block.blockRegistry.getNameForObject(block), meta);
-        if (customMapping != null) {
-            stack = customMapping.getItems();
-        } else
-            if (block.canSilkHarvest(world.getWorld(), player.getPlayer(), blockPos.x, blockPos.y, blockPos.z, meta)) {
-                stack = BetterBuildersWandsMod.instance.blockCache.getStackedBlock(world, blockPos);
-            } else if (!BetterBuildersWandsMod.instance.configValues.SOFT_BLACKLIST_SET.contains(blockString)) {
-                Item dropped = block.getItemDropped(meta, new Random(), 0);
-                if (dropped != null) {
-                    stack = new ItemStack(
-                            dropped,
-                            block.quantityDropped(meta, 0, new Random()),
-                            block.damageDropped(meta));
-                }
+        if (block.canSilkHarvest(world.getWorld(), player.getPlayer(), blockPos.x, blockPos.y, blockPos.z, meta)) {
+            stack = BetterBuildersWandsMod.instance.blockCache.getStackedBlock(world, blockPos);
+        } else if (!BetterBuildersWandsMod.instance.configValues.SOFT_BLACKLIST_SET.contains(blockString)) {
+            Item dropped = block.getItemDropped(meta, new Random(), 0);
+            if (dropped != null) {
+                stack = new ItemStack(dropped, block.quantityDropped(meta, 0, new Random()), block.damageDropped(meta));
             }
+        }
         // ForgeEventFactory.fireBlockHarvesting(items,this.world.getWorld(), block, blockPos.x, blockPos.y, blockPos.z,
         // world.getMetadata(blockPos), 0, 1.0F, true, this.player.getPlayer());
         return stack;
     }
 
     private boolean shouldContinue(Point3d currentCandidate, Block targetBlock, int targetMetadata,
-            Block candidateSupportingBlock, int candidateSupportingMeta, AxisAlignedBB blockBB,
-            EnumFluidLock fluidLock) {
+            Block candidateSupportingBlock, int candidateSupportingMeta, AxisAlignedBB blockBB, EnumFluidLock fluidLock,
+            boolean isNBTSensitive, TileEntity targetTile, TileEntity candidateSupportingTile) {
         if (!world.blockIsAir(currentCandidate)) {
             Block currrentCandidateBlock = world.getBlock(currentCandidate);
             if (!(fluidLock == EnumFluidLock.IGNORE && currrentCandidateBlock != null
@@ -111,17 +110,35 @@ public class WandWorker {
                 targetMetadata,
                 new ItemStack(candidateSupportingBlock, 1, candidateSupportingMeta)))
             return false;
-
+        if (isNBTSensitive) {
+            if (targetTile == null || candidateSupportingTile == null) {
+                return false;
+            }
+            NBTTagCompound targetNBT = new NBTTagCompound();
+            NBTTagCompound candidateSupportingNBT = new NBTTagCompound();
+            targetTile.writeToNBT(targetNBT);
+            candidateSupportingTile.writeToNBT(candidateSupportingNBT);
+            targetNBT.removeTag("x");
+            targetNBT.removeTag("y");
+            targetNBT.removeTag("z");
+            candidateSupportingNBT.removeTag("x");
+            candidateSupportingNBT.removeTag("y");
+            candidateSupportingNBT.removeTag("z");
+            if (!targetNBT.equals(candidateSupportingNBT)) {
+                return false;
+            }
+        }
         return !world.entitiesInBox(blockBB);
     }
 
     public LinkedList<Point3d> getBlockPositionList(Point3d blockLookedAt, ForgeDirection placeDirection, int maxBlocks,
-            EnumLock directionLock, EnumLock faceLock, EnumFluidLock fluidLock) {
+            EnumLock directionLock, EnumLock faceLock, EnumFluidLock fluidLock, boolean isNBTSensitive) {
         LinkedList<Point3d> candidates = new LinkedList<Point3d>();
         LinkedList<Point3d> toPlace = new LinkedList<Point3d>();
 
         Block targetBlock = world.getBlock(blockLookedAt);
         int targetMetadata = world.getMetadata(blockLookedAt);
+        TileEntity targetTile = world.getTile(blockLookedAt);
         Point3d startingPoint = blockLookedAt.move(placeDirection);
 
         int directionMaskInt = directionLock.mask;
@@ -143,6 +160,7 @@ public class WandWorker {
             Point3d supportingPoint = currentCandidate.move(placeDirection.getOpposite());
             Block candidateSupportingBlock = world.getBlock(supportingPoint);
             int candidateSupportingMeta = world.getMetadata(supportingPoint);
+            TileEntity candidateSupportingTile = world.getTile(supportingPoint);
             AxisAlignedBB candidateBB = blockBB.copy().offset(
                     currentCandidate.x - blockLookedAt.x,
                     currentCandidate.y - blockLookedAt.y,
@@ -154,7 +172,10 @@ public class WandWorker {
                     candidateSupportingBlock,
                     candidateSupportingMeta,
                     candidateBB,
-                    fluidLock) && allCandidates.add(currentCandidate)) {
+                    fluidLock,
+                    isNBTSensitive,
+                    targetTile,
+                    candidateSupportingTile) && allCandidates.add(currentCandidate)) {
                 toPlace.add(currentCandidate);
 
                 switch (placeDirection) {
@@ -231,7 +252,12 @@ public class WandWorker {
             CustomMapping mapping = BetterBuildersWandsMod.instance.mappingManager
                     .getMapping(world.getBlock(originalBlock), world.getMetadata(originalBlock));
             if (mapping != null) {
-                blockPlaceSuccess = world.setBlock(blockPos, mapping.getPlaceBlock(), mapping.getPlaceMeta());
+                blockPlaceSuccess = world.setBlock(
+                        originalBlock,
+                        blockPos,
+                        mapping.getPlaceBlock(),
+                        mapping.getPlaceMeta(),
+                        mapping.shouldCopyTileNBT());
             } else {
                 blockPlaceSuccess = world.copyBlock(originalBlock, blockPos);
             }
@@ -243,7 +269,7 @@ public class WandWorker {
                 if (!player.isCreative()) {
                     wand.placeBlock(wandItem, player.getPlayer());
                 }
-                boolean takeFromInventory = player.useItem(sourceItems);
+                boolean takeFromInventory = player.useItem(sourceItems, mapping != null && mapping.shouldCopyTileNBT());
                 if (!takeFromInventory) {
                     FMLLog.info("BBW takeback: %s", blockPos.toString());
                     world.setBlockToAir(blockPos);

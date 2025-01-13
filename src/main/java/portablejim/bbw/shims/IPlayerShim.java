@@ -11,9 +11,9 @@ import portablejim.bbw.basics.Point3d;
  */
 public interface IPlayerShim {
 
-    int countItems(ItemStack itemStack);
+    int countItems(ItemStack itemStack, boolean isNBTSensitive);
 
-    boolean useItem(ItemStack itemStack);
+    boolean useItem(ItemStack itemStack, boolean isNBTSensitive);
 
     ItemStack getNextItem(Block block, int meta);
 

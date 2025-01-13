@@ -49,7 +49,7 @@ public class BasicPlayerShim implements IPlayerShim {
     }
 
     @Override
-    public int countItems(ItemStack itemStack) {
+    public int countItems(ItemStack itemStack, boolean isNBTSensitive) {
         int total = 0;
         if (itemStack == null || player.inventory == null || player.inventory.mainInventory == null) {
             return 0;
@@ -59,7 +59,8 @@ public class BasicPlayerShim implements IPlayerShim {
         int meta = getBlockMeta(itemStack);
 
         for (ItemStack inventoryStack : player.inventory.mainInventory) {
-            if (inventoryStack != null && itemStack.isItemEqual(inventoryStack)) {
+            if (inventoryStack != null && itemStack.isItemEqual(inventoryStack)
+                    && (!isNBTSensitive || ItemStack.areItemStackTagsEqual(itemStack, inventoryStack))) {
                 total += Math.max(0, inventoryStack.stackSize);
             } else
                 if (providersEnabled && inventoryStack != null && inventoryStack.getItem() instanceof IBlockProvider) {
@@ -74,7 +75,7 @@ public class BasicPlayerShim implements IPlayerShim {
     }
 
     @Override
-    public boolean useItem(ItemStack itemStack) {
+    public boolean useItem(ItemStack itemStack, boolean isNBTSensitive) {
         if (itemStack == null || player.inventory == null || player.inventory.mainInventory == null) {
             return false;
         }
@@ -84,7 +85,8 @@ public class BasicPlayerShim implements IPlayerShim {
         List<ItemStack> providers = new ArrayList<ItemStack>();
         for (int i = player.inventory.mainInventory.length - 1; i >= 0; i--) {
             ItemStack inventoryStack = player.inventory.mainInventory[i];
-            if (inventoryStack != null && itemStack.isItemEqual(inventoryStack)) {
+            if (inventoryStack != null && itemStack.isItemEqual(inventoryStack)
+                    && (!isNBTSensitive || ItemStack.areItemStackTagsEqual(itemStack, inventoryStack))) {
                 if (inventoryStack.stackSize < toUse) {
                     inventoryStack.stackSize = 0;
                     toUse -= inventoryStack.stackSize;
