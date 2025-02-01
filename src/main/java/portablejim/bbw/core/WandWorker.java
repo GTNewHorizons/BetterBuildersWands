@@ -161,10 +161,13 @@ public class WandWorker {
             Block candidateSupportingBlock = world.getBlock(supportingPoint);
             int candidateSupportingMeta = world.getMetadata(supportingPoint);
             TileEntity candidateSupportingTile = world.getTile(supportingPoint);
-            AxisAlignedBB candidateBB = blockBB.copy().offset(
-                    currentCandidate.x - blockLookedAt.x,
-                    currentCandidate.y - blockLookedAt.y,
-                    currentCandidate.z - blockLookedAt.z);
+            AxisAlignedBB candidateBB = blockBB;
+            if (candidateBB != null) {
+                candidateBB.copy().offset(
+                        currentCandidate.x - blockLookedAt.x,
+                        currentCandidate.y - blockLookedAt.y,
+                        currentCandidate.z - blockLookedAt.z);
+            }
             if (shouldContinue(
                     currentCandidate,
                     targetBlock,
