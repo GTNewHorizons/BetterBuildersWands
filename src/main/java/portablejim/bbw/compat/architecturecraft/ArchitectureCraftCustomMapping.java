@@ -23,7 +23,7 @@ public class ArchitectureCraftCustomMapping extends CustomMapping {
 
     @Override
     public ItemStack getItems(IWorldShim world, Point3d point) {
-        TileEntity tileEntity = world.getWorld().getTileEntity(point.x, point.y, point.z);
+        TileEntity tileEntity = world.getTile(point);
         if (tileEntity instanceof TileShape) {
             TileShape shapeTile = ((TileShape) tileEntity);
             ItemStack itemStack = shapeTile.newItemStack(1);
