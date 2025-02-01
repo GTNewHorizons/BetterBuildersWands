@@ -35,7 +35,7 @@ public class ForestryMCCustomMapping extends CustomMapping {
             registerMappings(blocks.logs, 0, 4, 8);
             registerMappings(blocks.logsFireproof, 0, 4, 8);
             registerMappings(blocks.planks, 0);
-            registerMappings(blocks.planks, 0);
+            registerMappings(blocks.planksFireproof, 0);
             registerMappings(blocks.slabs, 0, 8);
             registerMappings(blocks.slabsFireproof, 0, 8);
             registerMappings(blocks.slabsDouble, 0);
