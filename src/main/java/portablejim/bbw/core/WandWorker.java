@@ -90,6 +90,7 @@ public class WandWorker {
                             || currrentCandidateBlock instanceof BlockLiquid)))
                 return false;
         } ;
+        if (currentCandidate.y >= 255) return false;
         /*
          * if((FluidRegistry.getFluid("water").getBlock().equals(world.getBlock(currentCandidate)) ||
          * FluidRegistry.getFluid("lava").getBlock().equals(world.getBlock(currentCandidate))) &&
@@ -251,7 +252,6 @@ public class WandWorker {
             ItemStack sourceItems, int side, float hitX, float hitY, float hitZ) {
         ArrayList<Point3d> placedBlocks = new ArrayList<Point3d>();
         for (Point3d blockPos : blockPosList) {
-            if ( blockPos.y >= 255 ) continue;
             boolean blockPlaceSuccess;
             CustomMapping mapping = BetterBuildersWandsMod.instance.mappingManager
                     .getMapping(world.getBlock(originalBlock), world.getMetadata(originalBlock));
