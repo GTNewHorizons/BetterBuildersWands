@@ -90,6 +90,7 @@ public class WandWorker {
                             || currrentCandidateBlock instanceof BlockLiquid)))
                 return false;
         } ;
+        if (currentCandidate.y >= 255) return false;
         /*
          * if((FluidRegistry.getFluid("water").getBlock().equals(world.getBlock(currentCandidate)) ||
          * FluidRegistry.getFluid("lava").getBlock().equals(world.getBlock(currentCandidate))) &&
