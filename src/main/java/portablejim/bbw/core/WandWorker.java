@@ -7,6 +7,7 @@ import java.util.Random;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockLiquid;
+import net.minecraft.init.Blocks;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -16,6 +17,8 @@ import net.minecraftforge.common.util.ForgeDirection;
 import net.minecraftforge.fluids.IFluidBlock;
 
 import cpw.mods.fml.common.FMLLog;
+import cpw.mods.fml.common.Loader;
+import cpw.mods.fml.common.Optional;
 import portablejim.bbw.BetterBuildersWandsMod;
 import portablejim.bbw.basics.EnumFluidLock;
 import portablejim.bbw.basics.EnumLock;
@@ -24,6 +27,7 @@ import portablejim.bbw.core.conversion.CustomMapping;
 import portablejim.bbw.core.wands.IWand;
 import portablejim.bbw.shims.IPlayerShim;
 import portablejim.bbw.shims.IWorldShim;
+import xonin.backhand.api.core.BackhandUtils;
 
 /**
  * Does the heavy work of working out the blocks to place and places them.
@@ -46,10 +50,29 @@ public class WandWorker {
     public ItemStack getProperItemStack(IWorldShim world, IPlayerShim player, Point3d blockPos) {
         Block block = world.getBlock(blockPos);
         int meta = world.getMetadata(blockPos);
-        CustomMapping customMapping = BetterBuildersWandsMod.instance.mappingManager.getMapping(block, meta);
-        if (customMapping != null) {
-            return customMapping.getItems(world, blockPos);
+
+        boolean usedBackhand = false;
+
+        if (Loader.isModLoaded("backhand")) {
+            ItemStack itemStack = getProperItemStackBackhand(player);
+            if (itemStack != null) {
+                Item item = itemStack.getItem();
+                Block offhandBlock = Block.getBlockFromItem(item);
+                if (offhandBlock != null && offhandBlock != Blocks.air) {
+                    block = offhandBlock;
+                    meta = itemStack.getItemDamage();
+                    usedBackhand = true;
+                }
+            }
         }
+
+        if (!usedBackhand) {
+            CustomMapping customMapping = BetterBuildersWandsMod.instance.mappingManager.getMapping(block, meta);
+            if (customMapping != null) {
+                return customMapping.getItems(world, blockPos);
+            }
+        }
+
         String blockString = String.format("%s/%s", Block.blockRegistry.getNameForObject(block), meta);
         if (!BetterBuildersWandsMod.instance.configValues.HARD_BLACKLIST_SET.contains(blockString)) {
             ItemStack exactItemstack = new ItemStack(block, 1, meta);
@@ -59,6 +82,11 @@ public class WandWorker {
             return getEquivalentItemStack(blockPos);
         }
         return null;
+    }
+
+    @Optional.Method(modid = "backhand")
+    public static ItemStack getProperItemStackBackhand(IPlayerShim player) {
+        return BackhandUtils.getOffhandItem(player.getPlayer());
     }
 
     public ItemStack getEquivalentItemStack(Point3d blockPos) {
@@ -249,12 +277,33 @@ public class WandWorker {
     }
 
     public ArrayList<Point3d> placeBlocks(ItemStack wandItem, LinkedList<Point3d> blockPosList, Point3d originalBlock,
-            ItemStack sourceItems, int side, float hitX, float hitY, float hitZ) {
-        ArrayList<Point3d> placedBlocks = new ArrayList<Point3d>();
+            ItemStack sourceItems, IPlayerShim playerShim, int side, float hitX, float hitY, float hitZ) {
+        ArrayList<Point3d> placedBlocks = new ArrayList<>();
         for (Point3d blockPos : blockPosList) {
             boolean blockPlaceSuccess;
             CustomMapping mapping = BetterBuildersWandsMod.instance.mappingManager
                     .getMapping(world.getBlock(originalBlock), world.getMetadata(originalBlock));
+
+            if (Loader.isModLoaded("backhand")) {
+                ItemStack backhandItem = WandWorker.getProperItemStackBackhand(playerShim);
+                Block targetBlock = null;
+                int meta = 0;
+
+                if (backhandItem != null) {
+                    targetBlock = Block.getBlockFromItem(backhandItem.getItem());
+                    meta = backhandItem.getItemDamage();
+                }
+
+                if (targetBlock == null || targetBlock == Blocks.air) {
+                    targetBlock = Block.getBlockFromItem(sourceItems.getItem());
+                    meta = sourceItems.getItemDamage();
+                }
+
+                if (targetBlock != null && targetBlock != Blocks.air) {
+                    mapping = BetterBuildersWandsMod.instance.mappingManager.getMapping(targetBlock, meta);
+                }
+            }
+
             if (mapping != null) {
                 blockPlaceSuccess = world.setBlock(
                         originalBlock,
@@ -268,6 +317,12 @@ public class WandWorker {
 
             if (blockPlaceSuccess) {
                 Block block = world.getBlock(originalBlock);
+                if (Loader.isModLoaded("backhand")) {
+                    Block backHandBlock = Block.getBlockFromItem(sourceItems.getItem());
+                    if (backHandBlock != null && backHandBlock != Blocks.air) {
+                        block = backHandBlock;
+                    }
+                }
                 world.playPlaceAtBlock(blockPos, block);
                 placedBlocks.add(blockPos);
                 if (!player.isCreative()) {

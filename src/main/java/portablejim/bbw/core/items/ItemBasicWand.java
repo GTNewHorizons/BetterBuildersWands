@@ -8,6 +8,7 @@ import net.minecraft.block.Block;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.init.Blocks;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
@@ -17,6 +18,7 @@ import net.minecraft.world.World;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.common.util.ForgeDirection;
 
+import cpw.mods.fml.common.Loader;
 import portablejim.bbw.BetterBuildersWandsMod;
 import portablejim.bbw.basics.EnumFluidLock;
 import portablejim.bbw.basics.EnumLock;
@@ -71,8 +73,8 @@ public abstract class ItemBasicWand extends Item implements IWandItem {
             ItemStack sourceItems = worker.getProperItemStack(worldShim, playerShim, clickedPos);
 
             if (sourceItems != null && sourceItems.getItem() instanceof ItemBlock) {
-                CustomMapping customMapping = BetterBuildersWandsMod.instance.mappingManager
-                        .getMapping(worldShim.getBlock(clickedPos), worldShim.getMetadata(clickedPos));
+                CustomMapping customMapping = getCustomMapping(worldShim, playerShim, clickedPos);
+
                 int numBlocks = Math.min(
                         wand.getMaxBlocks(itemstack),
                         playerShim.countItems(sourceItems, customMapping != null && customMapping.shouldCopyTileNBT()));
@@ -89,7 +91,7 @@ public abstract class ItemBasicWand extends Item implements IWandItem {
                         customMapping != null && customMapping.shouldCopyTileNBT());
 
                 ArrayList<Point3d> placedBlocks = worker
-                        .placeBlocks(itemstack, blocks, clickedPos, sourceItems, side, hitX, hitY, hitZ);
+                        .placeBlocks(itemstack, blocks, clickedPos, sourceItems, playerShim, side, hitX, hitY, hitZ);
                 if (placedBlocks.size() > 0) {
                     int[] placedIntArray = new int[placedBlocks.size() * 3];
                     for (int i = 0; i < placedBlocks.size(); i++) {
@@ -184,6 +186,30 @@ public abstract class ItemBasicWand extends Item implements IWandItem {
     public boolean hitEntity(ItemStack p_77644_1_, EntityLivingBase p_77644_2_, EntityLivingBase p_77644_3_) {
         p_77644_1_.damageItem(2, p_77644_3_);
         return true;
+    }
+
+    public static CustomMapping getCustomMapping(IWorldShim worldShim, IPlayerShim playerShim, Point3d clickedPos) {
+        if (Loader.isModLoaded("backhand")) {
+            ItemStack backhandItem = WandWorker.getProperItemStackBackhand(playerShim);
+            if (backhandItem != null) {
+                Block offhandBlock = Block.getBlockFromItem(backhandItem.getItem());
+                if (offhandBlock != null && offhandBlock != Blocks.air) {
+                    int meta = backhandItem.getItemDamage();
+                    CustomMapping customMapping = BetterBuildersWandsMod.instance.mappingManager
+                            .getMapping(offhandBlock, meta);
+
+                    if (customMapping == null) {
+                        customMapping = new CustomMapping(offhandBlock, meta, backhandItem, offhandBlock, meta);
+                        BetterBuildersWandsMod.instance.mappingManager.setMapping(customMapping);
+                    }
+                    return customMapping;
+                }
+            }
+        }
+
+        Block worldBlock = worldShim.getBlock(clickedPos);
+        int worldMeta = worldShim.getMetadata(clickedPos);
+        return BetterBuildersWandsMod.instance.mappingManager.getMapping(worldBlock, worldMeta);
     }
 
     public void setMode(ItemStack item, EnumLock mode) {
