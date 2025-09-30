@@ -19,7 +19,7 @@ public class CustomMappingManager {
     ArrayList<CustomMapping> mappings;
 
     public CustomMappingManager() {
-        mappings = new ArrayList<CustomMapping>();
+        mappings = new ArrayList<>();
     }
 
     public void loadConfig(String configString) {
@@ -60,11 +60,11 @@ public class CustomMappingManager {
                         itemItemstack,
                         targetBlock,
                         targetMeta);
-                BetterBuildersWandsMod.logger.info(String.format("Added '%s' to mapping", mappingString));
+                BetterBuildersWandsMod.logger.info("Added '{}' to mapping", mappingString);
                 return newMapping;
             }
         }
-        BetterBuildersWandsMod.logger.error(String.format("Error adding '%s' to mapping", mappingString));
+        BetterBuildersWandsMod.logger.error("Error adding '{}' to mapping", mappingString);
         return null;
     }
 

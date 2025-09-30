@@ -82,7 +82,7 @@ public class BasicPlayerShim implements IPlayerShim {
 
         // Reverse direction to leave hotbar to last.
         int toUse = itemStack.stackSize;
-        List<ItemStack> providers = new ArrayList<ItemStack>();
+        List<ItemStack> providers = new ArrayList<>();
         for (int i = player.inventory.mainInventory.length - 1; i >= 0; i--) {
             ItemStack inventoryStack = player.inventory.mainInventory[i];
             if (inventoryStack != null && itemStack.isItemEqual(inventoryStack)
@@ -91,7 +91,7 @@ public class BasicPlayerShim implements IPlayerShim {
                     inventoryStack.stackSize = 0;
                     toUse -= inventoryStack.stackSize;
                 } else {
-                    inventoryStack.stackSize = inventoryStack.stackSize - toUse;
+                    inventoryStack.stackSize -= toUse;
                     toUse = 0;
                 }
                 if (inventoryStack.stackSize == 0) {

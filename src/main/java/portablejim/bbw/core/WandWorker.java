@@ -9,6 +9,7 @@ import net.minecraft.block.Block;
 import net.minecraft.block.BlockLiquid;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.Item;
+import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
@@ -38,7 +39,7 @@ public class WandWorker {
     private final IPlayerShim player;
     private final IWorldShim world;
 
-    HashSet<Point3d> allCandidates = new HashSet<Point3d>();
+    HashSet<Point3d> allCandidates = new HashSet<>();
 
     public WandWorker(IWand wand, IPlayerShim player, IWorldShim world) {
 
@@ -55,9 +56,9 @@ public class WandWorker {
 
         if (Loader.isModLoaded("backhand")) {
             ItemStack itemStack = getProperItemStackBackhand(player);
-            if (itemStack != null) {
-                Item item = itemStack.getItem();
-                Block offhandBlock = Block.getBlockFromItem(item);
+            if (itemStack != null && itemStack.getItem() instanceof ItemBlock) {
+                ItemBlock ib = (ItemBlock) itemStack.getItem();
+                Block offhandBlock = ib.field_150939_a;
                 if (offhandBlock != null && offhandBlock != Blocks.air) {
                     block = offhandBlock;
                     meta = itemStack.getItemDamage();
@@ -113,11 +114,10 @@ public class WandWorker {
             boolean isNBTSensitive, TileEntity targetTile, TileEntity candidateSupportingTile) {
         if (!world.blockIsAir(currentCandidate)) {
             Block currrentCandidateBlock = world.getBlock(currentCandidate);
-            if (!(fluidLock == EnumFluidLock.IGNORE && currrentCandidateBlock != null
-                    && (currrentCandidateBlock instanceof IFluidBlock
-                            || currrentCandidateBlock instanceof BlockLiquid)))
+            if (!(fluidLock == EnumFluidLock.IGNORE && (currrentCandidateBlock instanceof IFluidBlock
+                    || currrentCandidateBlock instanceof BlockLiquid)))
                 return false;
-        } ;
+        }
         if (currentCandidate.y >= 255) return false;
         /*
          * if((FluidRegistry.getFluid("water").getBlock().equals(world.getBlock(currentCandidate)) ||
@@ -162,8 +162,8 @@ public class WandWorker {
 
     public LinkedList<Point3d> getBlockPositionList(Point3d blockLookedAt, ForgeDirection placeDirection, int maxBlocks,
             EnumLock directionLock, EnumLock faceLock, EnumFluidLock fluidLock, boolean isNBTSensitive) {
-        LinkedList<Point3d> candidates = new LinkedList<Point3d>();
-        LinkedList<Point3d> toPlace = new LinkedList<Point3d>();
+        LinkedList<Point3d> candidates = new LinkedList<>();
+        LinkedList<Point3d> toPlace = new LinkedList<>();
 
         Block targetBlock = world.getBlock(blockLookedAt);
         int targetMetadata = world.getMetadata(blockLookedAt);
@@ -183,7 +183,7 @@ public class WandWorker {
         }
         AxisAlignedBB blockBB = targetBlock
                 .getCollisionBoundingBoxFromPool(world.getWorld(), blockLookedAt.x, blockLookedAt.y, blockLookedAt.z);
-        while (candidates.size() > 0 && toPlace.size() < maxBlocks) {
+        while (!candidates.isEmpty() && toPlace.size() < maxBlocks) {
             Point3d currentCandidate = candidates.removeFirst();
 
             Point3d supportingPoint = currentCandidate.move(placeDirection.getOpposite());
@@ -318,9 +318,8 @@ public class WandWorker {
             if (blockPlaceSuccess) {
                 Block block = world.getBlock(originalBlock);
                 if (Loader.isModLoaded("backhand")) {
-                    Block backHandBlock = Block.getBlockFromItem(sourceItems.getItem());
-                    if (backHandBlock != null && backHandBlock != Blocks.air) {
-                        block = backHandBlock;
+                    if (sourceItems.getItem() instanceof ItemBlock) {
+                        block = ((ItemBlock) sourceItems.getItem()).field_150939_a;
                     }
                 }
                 world.playPlaceAtBlock(blockPos, block);

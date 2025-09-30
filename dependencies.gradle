@@ -11,4 +11,5 @@ dependencies {
         transitive = false
     }
     implementation("com.github.GTNewHorizons:Backhand:1.7.6:dev")
+    implementation('com.github.GTNewHorizons:Applied-Energistics-2-Unofficial:rv3-beta-690-GTNH:dev')
 }

@@ -8,7 +8,6 @@ import net.minecraft.block.Block;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.init.Blocks;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
@@ -92,7 +91,7 @@ public abstract class ItemBasicWand extends Item implements IWandItem {
 
                 ArrayList<Point3d> placedBlocks = worker
                         .placeBlocks(itemstack, blocks, clickedPos, sourceItems, playerShim, side, hitX, hitY, hitZ);
-                if (placedBlocks.size() > 0) {
+                if (!placedBlocks.isEmpty()) {
                     int[] placedIntArray = new int[placedBlocks.size() * 3];
                     for (int i = 0; i < placedBlocks.size(); i++) {
                         Point3d currentPoint = placedBlocks.get(i);
@@ -191,19 +190,17 @@ public abstract class ItemBasicWand extends Item implements IWandItem {
     public static CustomMapping getCustomMapping(IWorldShim worldShim, IPlayerShim playerShim, Point3d clickedPos) {
         if (Loader.isModLoaded("backhand")) {
             ItemStack backhandItem = WandWorker.getProperItemStackBackhand(playerShim);
-            if (backhandItem != null) {
-                Block offhandBlock = Block.getBlockFromItem(backhandItem.getItem());
-                if (offhandBlock != null && offhandBlock != Blocks.air) {
-                    int meta = backhandItem.getItemDamage();
-                    CustomMapping customMapping = BetterBuildersWandsMod.instance.mappingManager
-                            .getMapping(offhandBlock, meta);
+            if (backhandItem != null && backhandItem.getItem() instanceof ItemBlock) {
+                Block offhandBlock = ((ItemBlock) backhandItem.getItem()).field_150939_a;
+                int meta = backhandItem.getItemDamage();
+                CustomMapping customMapping = BetterBuildersWandsMod.instance.mappingManager
+                        .getMapping(offhandBlock, meta);
 
-                    if (customMapping == null) {
-                        customMapping = new CustomMapping(offhandBlock, meta, backhandItem, offhandBlock, meta);
-                        BetterBuildersWandsMod.instance.mappingManager.setMapping(customMapping);
-                    }
-                    return customMapping;
+                if (customMapping == null) {
+                    customMapping = new CustomMapping(offhandBlock, meta, backhandItem, offhandBlock, meta);
+                    BetterBuildersWandsMod.instance.mappingManager.setMapping(customMapping);
                 }
+                return customMapping;
             }
         }
 
