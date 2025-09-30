@@ -13,7 +13,7 @@ public interface IPlayerShim {
 
     int countItems(ItemStack itemStack, boolean isNBTSensitive);
 
-    boolean useItem(ItemStack itemStack, boolean isNBTSensitive);
+    int useItem(ItemStack itemStack, boolean isNBTSensitive);
 
     ItemStack getNextItem(Block block, int meta);
 

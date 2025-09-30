@@ -17,7 +17,6 @@ import net.minecraft.util.AxisAlignedBB;
 import net.minecraftforge.common.util.ForgeDirection;
 import net.minecraftforge.fluids.IFluidBlock;
 
-import cpw.mods.fml.common.FMLLog;
 import cpw.mods.fml.common.Loader;
 import cpw.mods.fml.common.Optional;
 import portablejim.bbw.BetterBuildersWandsMod;
@@ -110,8 +109,8 @@ public class WandWorker {
     }
 
     private boolean shouldContinue(Point3d currentCandidate, Block targetBlock, int targetMetadata,
-            Block candidateSupportingBlock, int candidateSupportingMeta, AxisAlignedBB blockBB, EnumFluidLock fluidLock,
-            boolean isNBTSensitive, TileEntity targetTile, TileEntity candidateSupportingTile) {
+                                   Block candidateSupportingBlock, int candidateSupportingMeta, AxisAlignedBB blockBB, EnumFluidLock fluidLock,
+                                   boolean isNBTSensitive, TileEntity targetTile, TileEntity candidateSupportingTile) {
         if (!world.blockIsAir(currentCandidate)) {
             Block currrentCandidateBlock = world.getBlock(currentCandidate);
             if (!(fluidLock == EnumFluidLock.IGNORE && (currrentCandidateBlock instanceof IFluidBlock
@@ -161,7 +160,7 @@ public class WandWorker {
     }
 
     public LinkedList<Point3d> getBlockPositionList(Point3d blockLookedAt, ForgeDirection placeDirection, int maxBlocks,
-            EnumLock directionLock, EnumLock faceLock, EnumFluidLock fluidLock, boolean isNBTSensitive) {
+                                                    EnumLock directionLock, EnumLock faceLock, EnumFluidLock fluidLock, boolean isNBTSensitive) {
         LinkedList<Point3d> candidates = new LinkedList<>();
         LinkedList<Point3d> toPlace = new LinkedList<>();
 
@@ -176,9 +175,9 @@ public class WandWorker {
         if (((directionLock != EnumLock.HORIZONTAL && directionLock != EnumLock.VERTICAL)
                 || (placeDirection != ForgeDirection.UP && placeDirection != ForgeDirection.DOWN))
                 && (directionLock != EnumLock.NORTHSOUTH
-                        || (placeDirection != ForgeDirection.NORTH && placeDirection != ForgeDirection.SOUTH))
+                || (placeDirection != ForgeDirection.NORTH && placeDirection != ForgeDirection.SOUTH))
                 && (directionLock != EnumLock.EASTWEST
-                        || (placeDirection != ForgeDirection.EAST && placeDirection != ForgeDirection.WEST))) {
+                || (placeDirection != ForgeDirection.EAST && placeDirection != ForgeDirection.WEST))) {
             candidates.add(startingPoint);
         }
         AxisAlignedBB blockBB = targetBlock
@@ -277,32 +276,39 @@ public class WandWorker {
     }
 
     public ArrayList<Point3d> placeBlocks(ItemStack wandItem, LinkedList<Point3d> blockPosList, Point3d originalBlock,
-            ItemStack sourceItems, IPlayerShim playerShim, int side, float hitX, float hitY, float hitZ) {
+                                          ItemStack sourceItems, IPlayerShim playerShim, int side, float hitX, float hitY, float hitZ) {
         ArrayList<Point3d> placedBlocks = new ArrayList<>();
-        for (Point3d blockPos : blockPosList) {
-            boolean blockPlaceSuccess;
-            CustomMapping mapping = BetterBuildersWandsMod.instance.mappingManager
-                    .getMapping(world.getBlock(originalBlock), world.getMetadata(originalBlock));
 
-            if (Loader.isModLoaded("backhand")) {
-                ItemStack backhandItem = WandWorker.getProperItemStackBackhand(playerShim);
-                Block targetBlock = null;
-                int meta = 0;
+        CustomMapping mapping = BetterBuildersWandsMod.instance.mappingManager
+                .getMapping(world.getBlock(originalBlock), world.getMetadata(originalBlock));
+        ItemStack needItem = sourceItems.copy();
 
-                if (backhandItem != null) {
-                    targetBlock = Block.getBlockFromItem(backhandItem.getItem());
-                    meta = backhandItem.getItemDamage();
-                }
+        if (Loader.isModLoaded("backhand")) {
+            ItemStack backhandItem = WandWorker.getProperItemStackBackhand(playerShim);
+            Block targetBlock = null;
+            int meta = 0;
 
-                if (targetBlock == null || targetBlock == Blocks.air) {
-                    targetBlock = Block.getBlockFromItem(sourceItems.getItem());
-                    meta = sourceItems.getItemDamage();
-                }
-
-                if (targetBlock != null && targetBlock != Blocks.air) {
-                    mapping = BetterBuildersWandsMod.instance.mappingManager.getMapping(targetBlock, meta);
-                }
+            if (backhandItem != null) {
+                targetBlock = Block.getBlockFromItem(backhandItem.getItem());
+                meta = backhandItem.getItemDamage();
             }
+
+            if (targetBlock == null || targetBlock == Blocks.air) {
+                targetBlock = Block.getBlockFromItem(sourceItems.getItem());
+                meta = sourceItems.getItemDamage();
+            }
+
+            if (targetBlock != null && targetBlock != Blocks.air) {
+                mapping = BetterBuildersWandsMod.instance.mappingManager.getMapping(targetBlock, meta);
+            }
+        }
+
+        Point3d[] blockPoss = blockPosList.toArray(new Point3d[0]);
+        needItem.stackSize = blockPoss.length;
+        int takeFromInventory = player.useItem(needItem, mapping != null && mapping.shouldCopyTileNBT());
+        for (int i = 0; i < takeFromInventory; ++i) {
+            Point3d blockPos = blockPoss[i];
+            boolean blockPlaceSuccess;
 
             if (mapping != null) {
                 blockPlaceSuccess = world.setBlock(
@@ -327,20 +333,13 @@ public class WandWorker {
                 if (!player.isCreative()) {
                     wand.placeBlock(wandItem, player.getPlayer());
                 }
-                boolean takeFromInventory = player.useItem(sourceItems, mapping != null && mapping.shouldCopyTileNBT());
-                if (!takeFromInventory) {
-                    FMLLog.info("BBW takeback: %s", blockPos.toString());
-                    world.setBlockToAir(blockPos);
-                    placedBlocks.remove(placedBlocks.size() - 1);
-                } else {
-                    block.onBlockPlacedBy(
-                            world.getWorld(),
-                            blockPos.x,
-                            blockPos.y,
-                            blockPos.z,
-                            player.getPlayer(),
-                            sourceItems);
-                }
+                block.onBlockPlacedBy(
+                        world.getWorld(),
+                        blockPos.x,
+                        blockPos.y,
+                        blockPos.z,
+                        player.getPlayer(),
+                        sourceItems);
             }
         }
 

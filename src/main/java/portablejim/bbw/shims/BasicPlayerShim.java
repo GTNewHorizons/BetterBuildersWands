@@ -16,8 +16,8 @@ import vazkii.botania.api.item.IBlockProvider;
  */
 public class BasicPlayerShim implements IPlayerShim {
 
-    private EntityPlayer player;
-    private boolean providersEnabled;
+    private final EntityPlayer player;
+    private final boolean providersEnabled;
 
     public BasicPlayerShim(EntityPlayer player) {
         this.player = player;
@@ -50,11 +50,11 @@ public class BasicPlayerShim implements IPlayerShim {
 
     @Override
     public int countItems(ItemStack itemStack, boolean isNBTSensitive) {
-        int total = 0;
         if (itemStack == null || player.inventory == null || player.inventory.mainInventory == null) {
             return 0;
         }
 
+        int total = 0;
         Block block = getBlock(itemStack);
         int meta = getBlockMeta(itemStack);
 
@@ -74,32 +74,39 @@ public class BasicPlayerShim implements IPlayerShim {
         return itemStack.stackSize > 0 ? total / itemStack.stackSize : 0;
     }
 
+    /**
+     * @param itemStack Required Quantity
+     * @return Actua Quantity
+     */
     @Override
-    public boolean useItem(ItemStack itemStack, boolean isNBTSensitive) {
+    public int useItem(ItemStack itemStack, boolean isNBTSensitive) {
         if (itemStack == null || player.inventory == null || player.inventory.mainInventory == null) {
-            return false;
+            return 0;
         }
 
         // Reverse direction to leave hotbar to last.
-        int toUse = itemStack.stackSize;
+        int toUse = 0;
+        final int needUse = itemStack.stackSize;
         List<ItemStack> providers = new ArrayList<>();
+
         for (int i = player.inventory.mainInventory.length - 1; i >= 0; i--) {
             ItemStack inventoryStack = player.inventory.mainInventory[i];
+            final int need = needUse - toUse;
             if (inventoryStack != null && itemStack.isItemEqual(inventoryStack)
                     && (!isNBTSensitive || ItemStack.areItemStackTagsEqual(itemStack, inventoryStack))) {
-                if (inventoryStack.stackSize < toUse) {
+                if (inventoryStack.stackSize < need) {
+                    toUse += inventoryStack.stackSize;
                     inventoryStack.stackSize = 0;
-                    toUse -= inventoryStack.stackSize;
                 } else {
-                    inventoryStack.stackSize -= toUse;
-                    toUse = 0;
+                    inventoryStack.stackSize -= need;
+                    toUse = needUse;
                 }
                 if (inventoryStack.stackSize == 0) {
                     player.inventory.setInventorySlotContents(i, null);
                 }
                 player.inventoryContainer.detectAndSendChanges();
-                if (toUse <= 0) {
-                    return true;
+                if (toUse >= needUse) {
+                    return needUse;
                 }
             } else
                 if (providersEnabled && inventoryStack != null && inventoryStack.getItem() instanceof IBlockProvider) {
@@ -108,16 +115,23 @@ public class BasicPlayerShim implements IPlayerShim {
         }
 
         // IBlockProvider does not support removing more than one item in an atomic operation.
-        if (toUse == 1) {
+        if (!providers.isEmpty()) {
             Block block = getBlock(itemStack);
             int meta = getBlockMeta(itemStack);
+            IBlockProvider prov = (IBlockProvider) providers.get(0).getItem();
             for (ItemStack provStack : providers) {
-                IBlockProvider prov = (IBlockProvider) provStack.getItem();
-                if (prov.provideBlock(player, itemStack, provStack, block, meta, true)) return true;
+                assert prov != null;
+                final int available = prov.getBlockCount(player, itemStack, provStack, block, meta);
+                if (available != 0) {
+                    while (prov.provideBlock(player, itemStack, provStack, block, meta, true) && needUse > toUse) {
+                        ++toUse;
+                    }
+                    player.inventoryContainer.detectAndSendChanges();
+                }
             }
         }
 
-        return false;
+        return toUse;
     }
 
     @Override
