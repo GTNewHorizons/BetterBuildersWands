@@ -41,7 +41,6 @@ public class WandWorker {
     HashSet<Point3d> allCandidates = new HashSet<>();
 
     public WandWorker(IWand wand, IPlayerShim player, IWorldShim world) {
-
         this.wand = wand;
         this.player = player;
         this.world = world;
@@ -109,8 +108,8 @@ public class WandWorker {
     }
 
     private boolean shouldContinue(Point3d currentCandidate, Block targetBlock, int targetMetadata,
-                                   Block candidateSupportingBlock, int candidateSupportingMeta, AxisAlignedBB blockBB, EnumFluidLock fluidLock,
-                                   boolean isNBTSensitive, TileEntity targetTile, TileEntity candidateSupportingTile) {
+            Block candidateSupportingBlock, int candidateSupportingMeta, AxisAlignedBB blockBB, EnumFluidLock fluidLock,
+            boolean isNBTSensitive, TileEntity targetTile, TileEntity candidateSupportingTile) {
         if (!world.blockIsAir(currentCandidate)) {
             Block currrentCandidateBlock = world.getBlock(currentCandidate);
             if (!(fluidLock == EnumFluidLock.IGNORE && (currrentCandidateBlock instanceof IFluidBlock
@@ -128,6 +127,16 @@ public class WandWorker {
         // if(targetBlock instanceof BlockCrops) return false;
         if (!targetBlock.canPlaceBlockAt(world.getWorld(), currentCandidate.x, currentCandidate.y, currentCandidate.z))
             return false;
+
+        if (Loader.isModLoaded("backhand")) {
+            ItemStack backhandItem = WandWorker.getProperItemStackBackhand(player);
+            if (backhandItem != null && backhandItem.getItem() instanceof ItemBlock) {
+                if (!((ItemBlock) backhandItem.getItem()).field_150939_a
+                        .canPlaceBlockAt(world.getWorld(), currentCandidate.x, currentCandidate.y, currentCandidate.z))
+                    return false;
+            }
+        }
+
         if (!targetBlock.canBlockStay(world.getWorld(), currentCandidate.x, currentCandidate.y, currentCandidate.z))
             return false;
         if (!targetBlock.canReplace(
@@ -160,7 +169,7 @@ public class WandWorker {
     }
 
     public LinkedList<Point3d> getBlockPositionList(Point3d blockLookedAt, ForgeDirection placeDirection, int maxBlocks,
-                                                    EnumLock directionLock, EnumLock faceLock, EnumFluidLock fluidLock, boolean isNBTSensitive) {
+            EnumLock directionLock, EnumLock faceLock, EnumFluidLock fluidLock, boolean isNBTSensitive) {
         LinkedList<Point3d> candidates = new LinkedList<>();
         LinkedList<Point3d> toPlace = new LinkedList<>();
 
@@ -175,9 +184,9 @@ public class WandWorker {
         if (((directionLock != EnumLock.HORIZONTAL && directionLock != EnumLock.VERTICAL)
                 || (placeDirection != ForgeDirection.UP && placeDirection != ForgeDirection.DOWN))
                 && (directionLock != EnumLock.NORTHSOUTH
-                || (placeDirection != ForgeDirection.NORTH && placeDirection != ForgeDirection.SOUTH))
+                        || (placeDirection != ForgeDirection.NORTH && placeDirection != ForgeDirection.SOUTH))
                 && (directionLock != EnumLock.EASTWEST
-                || (placeDirection != ForgeDirection.EAST && placeDirection != ForgeDirection.WEST))) {
+                        || (placeDirection != ForgeDirection.EAST && placeDirection != ForgeDirection.WEST))) {
             candidates.add(startingPoint);
         }
         AxisAlignedBB blockBB = targetBlock
@@ -276,7 +285,7 @@ public class WandWorker {
     }
 
     public ArrayList<Point3d> placeBlocks(ItemStack wandItem, LinkedList<Point3d> blockPosList, Point3d originalBlock,
-                                          ItemStack sourceItems, IPlayerShim playerShim, int side, float hitX, float hitY, float hitZ) {
+            ItemStack sourceItems, IPlayerShim playerShim, int side, float hitX, float hitY, float hitZ) {
         ArrayList<Point3d> placedBlocks = new ArrayList<>();
 
         CustomMapping mapping = BetterBuildersWandsMod.instance.mappingManager

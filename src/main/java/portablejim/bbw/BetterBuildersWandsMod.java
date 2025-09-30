@@ -36,6 +36,7 @@ import portablejim.bbw.core.items.ItemUnrestrictedWand;
 import portablejim.bbw.core.wands.RestrictedWand;
 import portablejim.bbw.core.wands.UnbreakingWand;
 import portablejim.bbw.network.PacketWandActivate;
+import portablejim.bbw.network.SynchronizeAEItemQuantity;
 import portablejim.bbw.proxy.IProxy;
 
 /**
@@ -106,6 +107,19 @@ public class BetterBuildersWandsMod {
         GameRegistry.registerItem(itemDiamondWand, "wandDiamond");
         networkWrapper = NetworkRegistry.INSTANCE.newSimpleChannel("bbwands");
         networkWrapper.registerMessage(PacketWandActivate.Handler.class, PacketWandActivate.class, 0, Side.SERVER);
+
+        if (Loader.isModLoaded("appliedenergistics2")) {
+            networkWrapper.registerMessage(
+                    SynchronizeAEItemQuantity.SyncServer.class,
+                    SynchronizeAEItemQuantity.SyncServer.class,
+                    1,
+                    Side.SERVER);
+            networkWrapper.registerMessage(
+                    SynchronizeAEItemQuantity.SyncClient.class,
+                    SynchronizeAEItemQuantity.SyncClient.class,
+                    2,
+                    Side.CLIENT);
+        }
 
         blockCache = new StackedBlockManager();
         mappingManager = new CustomMappingManager();

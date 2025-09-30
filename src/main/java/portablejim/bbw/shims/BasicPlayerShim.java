@@ -2,13 +2,29 @@ package portablejim.bbw.shims;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import net.minecraft.block.Block;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
 
+import com.glodblock.github.util.Util;
+
+import appeng.api.config.Actionable;
+import appeng.api.config.SecurityPermissions;
+import appeng.api.networking.security.PlayerSource;
+import appeng.api.storage.data.IAEItemStack;
+import appeng.helpers.WirelessTerminalGuiObject;
+import appeng.util.item.AEItemStack;
+import cpw.mods.fml.common.Loader;
+import cpw.mods.fml.common.Optional;
+import portablejim.bbw.BetterBuildersWandsMod;
 import portablejim.bbw.basics.Point3d;
+import portablejim.bbw.core.MEHandler;
+import portablejim.bbw.network.SynchronizeAEItemQuantity;
 import vazkii.botania.api.item.IBlockProvider;
 
 /**
@@ -18,10 +34,16 @@ public class BasicPlayerShim implements IPlayerShim {
 
     private final EntityPlayer player;
     private final boolean providersEnabled;
+    private final boolean aeEnabled;
+    private final boolean ae2fcEnabled;
+
+    public static int AEItemSize = 0;
 
     public BasicPlayerShim(EntityPlayer player) {
         this.player = player;
         this.providersEnabled = areProvidersEnabled();
+        this.aeEnabled = Loader.isModLoaded("appliedenergistics2");
+        this.ae2fcEnabled = Loader.isModLoaded("ae2fc");
     }
 
     private static Block getBlock(ItemStack stack) {
@@ -71,6 +93,10 @@ public class BasicPlayerShim implements IPlayerShim {
                 }
         }
 
+        if (aeEnabled) {
+            total += getAEItem(itemStack, Integer.MAX_VALUE - total, false);
+        }
+
         return itemStack.stackSize > 0 ? total / itemStack.stackSize : 0;
     }
 
@@ -88,7 +114,6 @@ public class BasicPlayerShim implements IPlayerShim {
         int toUse = 0;
         final int needUse = itemStack.stackSize;
         List<ItemStack> providers = new ArrayList<>();
-
         for (int i = player.inventory.mainInventory.length - 1; i >= 0; i--) {
             ItemStack inventoryStack = player.inventory.mainInventory[i];
             final int need = needUse - toUse;
@@ -108,16 +133,17 @@ public class BasicPlayerShim implements IPlayerShim {
                 if (toUse >= needUse) {
                     return needUse;
                 }
-            } else
+            } else {
                 if (providersEnabled && inventoryStack != null && inventoryStack.getItem() instanceof IBlockProvider) {
                     providers.add(inventoryStack);
                 }
+            }
         }
 
+        Block block = getBlock(itemStack);
+        int meta = getBlockMeta(itemStack);
         // IBlockProvider does not support removing more than one item in an atomic operation.
         if (!providers.isEmpty()) {
-            Block block = getBlock(itemStack);
-            int meta = getBlockMeta(itemStack);
             IBlockProvider prov = (IBlockProvider) providers.get(0).getItem();
             for (ItemStack provStack : providers) {
                 assert prov != null;
@@ -130,8 +156,66 @@ public class BasicPlayerShim implements IPlayerShim {
                 }
             }
         }
+        if (aeEnabled) {
+            toUse += getAEItem(itemStack, needUse - toUse, true);
+        }
 
         return toUse;
+    }
+
+    private static class LastItem {
+
+        private static Item item;
+        private static int meta;
+        private static NBTTagCompound nbt;
+
+        public static boolean equls(ItemStack stack) {
+            if (item != stack.getItem()) return false;
+            if (meta != stack.getItemDamage()) return false;
+            return Objects.equals(nbt, stack.getTagCompound());
+        }
+
+        public static void set(ItemStack stack) {
+            item = stack.getItem();
+            meta = stack.getItemDamage();
+            nbt = stack.getTagCompound();
+        }
+    }
+
+    @Optional.Method(modid = "appliedenergistics2")
+    public int getAEItem(ItemStack item, int size, boolean MODULATE) {
+        if (MODULATE) {
+            WirelessTerminalGuiObject obj = MEHandler.getTerminalGuiObject(player);
+            if (obj != null
+                    && (obj.rangeCheck() || (ae2fcEnabled && Util.hasInfinityBoosterCard(obj.getItemStack())))) {
+                if (MEHandler.securityCheck(player, obj.getGrid(), SecurityPermissions.EXTRACT)) {
+                    IAEItemStack stack = obj.extractItems(
+                            AEItemStack.create(item).setStackSize(size),
+                            Actionable.MODULATE,
+                            new PlayerSource(player, obj));
+                    if (stack == null) return 0;
+                    return (int) stack.getStackSize();
+                }
+            }
+        } else if (player.worldObj.isRemote) {
+            if (MEHandler.hasTerminal(player)) {
+                if (!LastItem.equls(item)) {
+                    BetterBuildersWandsMod.instance.networkWrapper
+                            .sendToServer(new SynchronizeAEItemQuantity.SyncServer(item));
+                    LastItem.set(item);
+                    return Math.min(AEItemSize, size);
+                }
+                if (player.worldObj.getTotalWorldTime() % 10 == 0) {
+                    BetterBuildersWandsMod.instance.networkWrapper
+                            .sendToServer(new SynchronizeAEItemQuantity.SyncServer(item));
+                    return Math.min(AEItemSize, size);
+                }
+            } else {
+                AEItemSize = 0;
+            }
+        }
+
+        return Math.min(AEItemSize, size);
     }
 
     @Override

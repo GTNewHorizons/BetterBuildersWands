@@ -55,9 +55,11 @@ public abstract class ItemBasicWand extends Item implements IWandItem {
         }
 
         if (!world.isRemote) {
-            IPlayerShim playerShim = new BasicPlayerShim(player);
+            IPlayerShim playerShim;
             if (player.capabilities.isCreativeMode) {
                 playerShim = new CreativePlayerShim(player);
+            } else {
+                playerShim = new BasicPlayerShim(player);
             }
             IWorldShim worldShim = new BasicWorldShim(world);
 
