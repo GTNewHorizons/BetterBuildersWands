@@ -1,18 +1,18 @@
 // Add your dependencies here
 
 dependencies {
-    compileOnly("com.github.GTNewHorizons:Botania:1.12.12-GTNH:dev")
-    compileOnly("com.github.GTNewHorizons:ArchitectureCraft:1.11.0") {
+    compileOnly("com.github.GTNewHorizons:Botania:1.13.3-GTNH:dev")
+    compileOnly("com.github.GTNewHorizons:ArchitectureCraft:1.12.0") {
         transitive = false
     }
-    compileOnly("com.github.GTNewHorizons:ForestryMC:4.10.13") {
+    compileOnly("com.github.GTNewHorizons:ForestryMC:4.11.0") {
         transitive = false
     }
-    compileOnly("com.github.GTNewHorizons:Backhand:1.7.6:dev") {
+    compileOnly("com.github.GTNewHorizons:Backhand:1.8.0:dev") {
         transitive = false
     }
-    compileOnly('com.github.GTNewHorizons:Applied-Energistics-2-Unofficial:rv3-beta-690-GTNH:dev')
-    compileOnly('com.github.GTNewHorizons:AE2FluidCraft-Rework:1.4.114-gtnh:dev') {
+    compileOnly('com.github.GTNewHorizons:Applied-Energistics-2-Unofficial:rv3-beta-720-GTNH:dev')
+    compileOnly('com.github.GTNewHorizons:AE2FluidCraft-Rework:1.5.8-gtnh:dev') {
         transitive = false
     }
 }
