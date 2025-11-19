@@ -11,7 +11,7 @@ dependencies {
     compileOnly("com.github.GTNewHorizons:Backhand:1.7.6:dev") {
         transitive = false
     }
-    compileOnly('com.github.GTNewHorizons:Applied-Energistics-2-Unofficial:rv3-beta-690-GTNH:dev')
+    implementation('com.github.GTNewHorizons:Applied-Energistics-2-Unofficial:rv3-beta-690-GTNH:dev')
     compileOnly('com.github.GTNewHorizons:AE2FluidCraft-Rework:1.4.114-gtnh:dev') {
         transitive = false
     }
