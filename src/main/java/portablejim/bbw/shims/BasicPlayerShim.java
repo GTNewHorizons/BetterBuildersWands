@@ -184,20 +184,20 @@ public class BasicPlayerShim implements IPlayerShim {
 
     @Optional.Method(modid = "appliedenergistics2")
     public int getAEItem(ItemStack item, int size, boolean MODULATE) {
-        if (MODULATE) {
+        if (!player.worldObj.isRemote) {
             WirelessTerminalGuiObject obj = MEHandler.getTerminalGuiObject(player);
             if (obj != null
                     && (obj.rangeCheck() || (ae2fcEnabled && Util.hasInfinityBoosterCard(obj.getItemStack())))) {
                 if (MEHandler.securityCheck(player, obj.getGrid(), SecurityPermissions.EXTRACT)) {
                     IAEItemStack stack = obj.extractItems(
                             AEItemStack.create(item).setStackSize(size),
-                            Actionable.MODULATE,
+                            MODULATE ? Actionable.MODULATE : Actionable.SIMULATE,
                             new PlayerSource(player, obj));
                     if (stack == null) return 0;
                     return (int) stack.getStackSize();
                 }
             }
-        } else if (player.worldObj.isRemote) {
+        } else {
             if (MEHandler.hasTerminal(player)) {
                 if (!LastItem.equls(item)) {
                     BetterBuildersWandsMod.instance.networkWrapper

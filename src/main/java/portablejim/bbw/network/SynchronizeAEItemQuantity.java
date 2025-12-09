@@ -34,12 +34,12 @@ public abstract class SynchronizeAEItemQuantity<T extends IMessage> implements I
 
         @Override
         public void fromBytes(ByteBuf buf) {
-            BasicPlayerShim.AEItemSize = readVar(buf);
+            BasicPlayerShim.AEItemSize = buf.readInt();
         }
 
         @Override
         public void toBytes(ByteBuf buf) {
-            writeVar(buf, size);
+            buf.writeInt(size);
         }
 
         @Override
@@ -87,38 +87,6 @@ public abstract class SynchronizeAEItemQuantity<T extends IMessage> implements I
                 BetterBuildersWandsMod.instance.networkWrapper.sendTo(new SyncClient(0), player);
             }
             return null;
-        }
-    }
-
-    private static final byte INT = -128;
-    private static final byte SHORT = -127;
-
-    private static final int USHORT_MAX = 0xFFFF;
-    private static final short UBYTE_MAX = 0xFF - 4;
-
-    public static void writeVar(ByteBuf buf, int value) {
-        if (value > USHORT_MAX) {
-            buf.writeByte(INT);
-            buf.writeInt(value);
-            return;
-        }
-        if (value > UBYTE_MAX) {
-            buf.writeByte(SHORT);
-            buf.writeShort(value);
-            return;
-        }
-        buf.writeByte(value);
-    }
-
-    public static int readVar(ByteBuf buf) {
-        short type = buf.readByte();
-        switch (type) {
-            case INT:
-                return buf.readInt();
-            case SHORT:
-                return buf.readShort();
-            default:
-                return type;
         }
     }
 }

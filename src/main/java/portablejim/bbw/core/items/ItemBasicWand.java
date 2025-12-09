@@ -1,6 +1,5 @@
 package portablejim.bbw.core.items;
 
-import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -91,7 +90,7 @@ public abstract class ItemBasicWand extends Item implements IWandItem {
                         getFluidMode(itemstack),
                         customMapping != null && customMapping.shouldCopyTileNBT());
 
-                ArrayList<Point3d> placedBlocks = worker
+                List<Point3d> placedBlocks = worker
                         .placeBlocks(itemstack, blocks, clickedPos, sourceItems, playerShim, side, hitX, hitY, hitZ);
                 if (!placedBlocks.isEmpty()) {
                     int[] placedIntArray = new int[placedBlocks.size() * 3];
