@@ -5,6 +5,7 @@ import net.minecraft.item.ItemStack;
 
 import com.glodblock.github.util.Util;
 
+import appeng.api.storage.IMEMonitor;
 import appeng.api.storage.data.IAEItemStack;
 import appeng.helpers.WirelessTerminalGuiObject;
 import appeng.util.item.AEItemStack;
@@ -74,18 +75,30 @@ public abstract class SynchronizeAEItemQuantity<T extends IMessage> implements I
         public IMessage onMessage(SyncServer message, MessageContext ctx) {
             EntityPlayerMP player = ctx.getServerHandler().playerEntity;
             WirelessTerminalGuiObject obj = MEHandler.getTerminalGuiObject(player);
-            if (obj == null) {
+
+            if (obj == null || message.stack == null) {
                 BetterBuildersWandsMod.instance.networkWrapper.sendTo(new SyncClient(0), player);
                 return null;
             }
-            IAEItemStack item = obj.getStorageList().findPrecise(AEItemStack.create(message.stack));
-            if (item != null && (obj.rangeCheck()
-                    || (Loader.isModLoaded("ae2fc") && Util.hasInfinityBoosterCard(obj.getItemStack())))) {
-                int size = (int) Math.min(item.getStackSize(), Integer.MAX_VALUE);
-                BetterBuildersWandsMod.instance.networkWrapper.sendTo(new SyncClient(size), player);
-            } else {
-                BetterBuildersWandsMod.instance.networkWrapper.sendTo(new SyncClient(0), player);
+
+            IMEMonitor<IAEItemStack> inventory = obj.getItemInventory();
+
+            if (inventory != null) {
+                boolean isInRange = obj.rangeCheck()
+                        || (Loader.isModLoaded("ae2fc") && Util.hasInfinityBoosterCard(obj.getItemStack()));
+
+                if (isInRange) {
+                    IAEItemStack aeStack = AEItemStack.create(message.stack);
+
+                    IAEItemStack found = inventory.getStorageList().findPrecise(aeStack);
+
+                    int size = (found != null) ? (int) Math.min(found.getStackSize(), Integer.MAX_VALUE) : 0;
+                    BetterBuildersWandsMod.instance.networkWrapper.sendTo(new SyncClient(size), player);
+                    return null;
+                }
             }
+
+            BetterBuildersWandsMod.instance.networkWrapper.sendTo(new SyncClient(0), player);
             return null;
         }
     }

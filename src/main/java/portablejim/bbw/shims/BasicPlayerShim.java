@@ -16,6 +16,7 @@ import com.glodblock.github.util.Util;
 import appeng.api.config.Actionable;
 import appeng.api.config.SecurityPermissions;
 import appeng.api.networking.security.PlayerSource;
+import appeng.api.storage.IMEMonitor;
 import appeng.api.storage.data.IAEItemStack;
 import appeng.helpers.WirelessTerminalGuiObject;
 import appeng.util.item.AEItemStack;
@@ -189,7 +190,9 @@ public class BasicPlayerShim implements IPlayerShim {
             if (obj != null
                     && (obj.rangeCheck() || (ae2fcEnabled && Util.hasInfinityBoosterCard(obj.getItemStack())))) {
                 if (MEHandler.securityCheck(player, obj.getGrid(), SecurityPermissions.EXTRACT)) {
-                    IAEItemStack stack = obj.extractItems(
+                    IMEMonitor<IAEItemStack> inventory = obj.getItemInventory();
+                    if (inventory == null) return 0;
+                    IAEItemStack stack = inventory.extractItems(
                             AEItemStack.create(item).setStackSize(size),
                             MODULATE ? Actionable.MODULATE : Actionable.SIMULATE,
                             new PlayerSource(player, obj));
