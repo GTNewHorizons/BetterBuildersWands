@@ -10,4 +10,7 @@ dependencies {
     compileOnly("com.github.GTNewHorizons:ForestryMC:4.10.13") {
         transitive = false
     }
+    compileOnly("com.github.GTNewHorizons:Backhand:1.8.2") {
+        transitive = false
+    }
 }

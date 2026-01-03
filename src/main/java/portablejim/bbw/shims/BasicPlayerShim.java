@@ -8,6 +8,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
 
+import cpw.mods.fml.common.FMLLog;
 import portablejim.bbw.basics.Point3d;
 import vazkii.botania.api.item.IBlockProvider;
 
@@ -18,10 +19,18 @@ public class BasicPlayerShim implements IPlayerShim {
 
     private EntityPlayer player;
     private boolean providersEnabled;
+    private int[] slotPriority;
 
     public BasicPlayerShim(EntityPlayer player) {
         this.player = player;
         this.providersEnabled = areProvidersEnabled();
+        this.slotPriority = new int[player.inventory.mainInventory.length];
+        // Invert so we take first from inventory
+        for (int i = player.inventory.mainInventory.length - 2; i >= 0; i--) {
+            this.slotPriority[i] = i;
+        }
+        // Offhand has lower priority than hotbar
+        this.slotPriority[player.inventory.mainInventory.length - 1] = player.inventory.mainInventory.length - 1;
     }
 
     private static Block getBlock(ItemStack stack) {
@@ -80,10 +89,9 @@ public class BasicPlayerShim implements IPlayerShim {
             return false;
         }
 
-        // Reverse direction to leave hotbar to last.
         int toUse = itemStack.stackSize;
         List<ItemStack> providers = new ArrayList<ItemStack>();
-        for (int i = player.inventory.mainInventory.length - 1; i >= 0; i--) {
+        for (int i : this.slotPriority) {
             ItemStack inventoryStack = player.inventory.mainInventory[i];
             if (inventoryStack != null && itemStack.isItemEqual(inventoryStack)
                     && (!isNBTSensitive || ItemStack.areItemStackTagsEqual(itemStack, inventoryStack))) {
@@ -101,10 +109,11 @@ public class BasicPlayerShim implements IPlayerShim {
                 if (toUse <= 0) {
                     return true;
                 }
-            } else
+            } else {
                 if (providersEnabled && inventoryStack != null && inventoryStack.getItem() instanceof IBlockProvider) {
                     providers.add(inventoryStack);
                 }
+            }
         }
 
         // IBlockProvider does not support removing more than one item in an atomic operation.

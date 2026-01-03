@@ -5,9 +5,12 @@ import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.Random;
 
+import javax.annotation.Nullable;
+
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockLiquid;
 import net.minecraft.item.Item;
+import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
@@ -24,6 +27,7 @@ import portablejim.bbw.core.conversion.CustomMapping;
 import portablejim.bbw.core.wands.IWand;
 import portablejim.bbw.shims.IPlayerShim;
 import portablejim.bbw.shims.IWorldShim;
+import xonin.backhand.api.core.BackhandUtils;
 
 /**
  * Does the heavy work of working out the blocks to place and places them.
@@ -43,9 +47,12 @@ public class WandWorker {
         this.world = world;
     }
 
-    public ItemStack getProperItemStack(IWorldShim world, IPlayerShim player, Point3d blockPos) {
-        Block block = world.getBlock(blockPos);
-        int meta = world.getMetadata(blockPos);
+    public @Nullable ItemStack getProperItemStack(IWorldShim world, IPlayerShim player, Point3d blockPos) {
+        ItemStack item = BackhandUtils.getOffhandItem(player.getPlayer());
+        boolean offhand = item != null && item.getItem() instanceof ItemBlock;
+        Block block = offhand ? Block.getBlockFromItem(item.getItem()) : world.getBlock(blockPos);
+        int meta = offhand ? item.getItemDamage() : world.getMetadata(blockPos);
+
         CustomMapping customMapping = BetterBuildersWandsMod.instance.mappingManager.getMapping(block, meta);
         if (customMapping != null) {
             return customMapping.getItems(world, blockPos);
@@ -251,10 +258,14 @@ public class WandWorker {
     public ArrayList<Point3d> placeBlocks(ItemStack wandItem, LinkedList<Point3d> blockPosList, Point3d originalBlock,
             ItemStack sourceItems, int side, float hitX, float hitY, float hitZ) {
         ArrayList<Point3d> placedBlocks = new ArrayList<Point3d>();
+        boolean offhand = !Block.getBlockFromItem(sourceItems.getItem()).equals(world.getBlock(originalBlock));
+        Block block = offhand ? Block.getBlockFromItem(sourceItems.getItem()) : world.getBlock(originalBlock);
+        int meta = offhand ? sourceItems.getItemDamage() : world.getMetadata(originalBlock);
+        CustomMapping mapping = BetterBuildersWandsMod.instance.mappingManager
+                .getMapping(block, meta);
+
         for (Point3d blockPos : blockPosList) {
             boolean blockPlaceSuccess;
-            CustomMapping mapping = BetterBuildersWandsMod.instance.mappingManager
-                    .getMapping(world.getBlock(originalBlock), world.getMetadata(originalBlock));
             if (mapping != null) {
                 blockPlaceSuccess = world.setBlock(
                         originalBlock,
@@ -263,11 +274,15 @@ public class WandWorker {
                         mapping.getPlaceMeta(),
                         mapping.shouldCopyTileNBT());
             } else {
-                blockPlaceSuccess = world.copyBlock(originalBlock, blockPos);
+                blockPlaceSuccess = world.setBlock(
+                        originalBlock,
+                        blockPos,
+                        block,
+                        meta,
+                        false);
             }
 
             if (blockPlaceSuccess) {
-                Block block = world.getBlock(originalBlock);
                 world.playPlaceAtBlock(blockPos, block);
                 placedBlocks.add(blockPos);
                 if (!player.isCreative()) {
