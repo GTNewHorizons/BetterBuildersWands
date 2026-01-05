@@ -37,6 +37,8 @@ public class BasicPlayerShim implements IPlayerShim {
     private final boolean providersEnabled;
     private final boolean aeEnabled;
     private final boolean ae2fcEnabled;
+    // Inventory > Hotbar > Backhand
+    private final int[] slotPriority;
 
     public static int AEItemSize = 0;
 
@@ -45,6 +47,13 @@ public class BasicPlayerShim implements IPlayerShim {
         this.providersEnabled = areProvidersEnabled();
         this.aeEnabled = Loader.isModLoaded("appliedenergistics2");
         this.ae2fcEnabled = Loader.isModLoaded("ae2fc");
+        this.slotPriority = new int[this.player.inventory.mainInventory.length];
+
+        int idx = 0;
+        for (int i = this.player.inventory.mainInventory.length - 2; i >= 0; i--) {
+            this.slotPriority[idx++] = i;
+        }
+        this.slotPriority[idx] = this.player.inventory.mainInventory.length - 1;
     }
 
     private static Block getBlock(ItemStack stack) {
@@ -114,8 +123,16 @@ public class BasicPlayerShim implements IPlayerShim {
         // Reverse direction to leave hotbar to last.
         int toUse = 0;
         final int needUse = itemStack.stackSize;
+
+        if (aeEnabled) {
+            toUse += getAEItem(itemStack, needUse, true);
+            if (toUse >= needUse) {
+                return needUse;
+            }
+        }
+
         List<ItemStack> providers = new ArrayList<>();
-        for (int i = player.inventory.mainInventory.length - 1; i >= 0; i--) {
+        for (int i : this.slotPriority) {
             ItemStack inventoryStack = player.inventory.mainInventory[i];
             final int need = needUse - toUse;
             if (inventoryStack != null && itemStack.isItemEqual(inventoryStack)
@@ -156,9 +173,6 @@ public class BasicPlayerShim implements IPlayerShim {
                     player.inventoryContainer.detectAndSendChanges();
                 }
             }
-        }
-        if (aeEnabled) {
-            toUse += getAEItem(itemStack, needUse - toUse, true);
         }
 
         return toUse;
