@@ -8,8 +8,8 @@ import net.minecraft.block.Block;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.init.Blocks;
 import net.minecraft.item.Item;
-import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.StatCollector;
@@ -21,6 +21,7 @@ import portablejim.bbw.BetterBuildersWandsMod;
 import portablejim.bbw.basics.EnumFluidLock;
 import portablejim.bbw.basics.EnumLock;
 import portablejim.bbw.basics.Point3d;
+import portablejim.bbw.compat.ztones.ZtonesCustomMapping;
 import portablejim.bbw.core.WandWorker;
 import portablejim.bbw.core.conversion.CustomMapping;
 import portablejim.bbw.core.wands.IWand;
@@ -70,12 +71,26 @@ public abstract class ItemBasicWand extends Item implements IWandItem {
 
             ItemStack sourceItems = worker.getProperItemStack(worldShim, playerShim, clickedPos);
 
-            if (sourceItems != null && sourceItems.getItem() instanceof ItemBlock) {
+            if (sourceItems != null && sourceItems.getItem() != null) {
                 CustomMapping customMapping = BetterBuildersWandsMod.instance.mappingManager
                         .getMapping(worldShim.getBlock(clickedPos), worldShim.getMetadata(clickedPos));
-                int numBlocks = Math.min(
-                        wand.getMaxBlocks(itemstack),
-                        playerShim.countItems(sourceItems, customMapping != null && customMapping.shouldCopyTileNBT()));
+
+                int numBlocks = wand.getMaxBlocks(itemstack);
+
+                if (sourceItems.getItem() == ZtonesCustomMapping.OFANIX
+                        && !player.inventory.hasItem(ZtonesCustomMapping.OFANIX)) {
+                    // remove the ofanix to use normal cobblestone
+                    sourceItems = new ItemStack(Item.getItemFromBlock(Blocks.cobblestone));
+                }
+
+                // Any other item still gets reduced
+                if (sourceItems.getItem() != ZtonesCustomMapping.OFANIX) {
+                    numBlocks = Math.min(
+                            wand.getMaxBlocks(itemstack),
+                            playerShim.countItems(
+                                    sourceItems,
+                                    customMapping != null && customMapping.shouldCopyTileNBT()));
+                }
 
                 // FMLLog.info("Max blocks: %d (%d|%d", numBlocks, this.wand.getMaxBlocks(itemstack),
                 // playerShim.countItems(sourceItems));

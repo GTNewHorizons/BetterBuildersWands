@@ -9,6 +9,7 @@ import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
 
 import portablejim.bbw.basics.Point3d;
+import portablejim.bbw.compat.ztones.ZtonesCustomMapping;
 import vazkii.botania.api.item.IBlockProvider;
 
 /**
@@ -78,6 +79,11 @@ public class BasicPlayerShim implements IPlayerShim {
     public boolean useItem(ItemStack itemStack, boolean isNBTSensitive) {
         if (itemStack == null || player.inventory == null || player.inventory.mainInventory == null) {
             return false;
+        }
+
+        if (player.inventory.hasItem(ZtonesCustomMapping.OFANIX) && itemStack.getItem() == ZtonesCustomMapping.OFANIX) {
+            // does not lower the durability
+            return true;
         }
 
         // Reverse direction to leave hotbar to last.
