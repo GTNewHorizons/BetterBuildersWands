@@ -10,4 +10,7 @@ dependencies {
     compileOnly("com.github.GTNewHorizons:ForestryMC:4.10.13") {
         transitive = false
     }
+    compileOnly("com.github.GTNewHorizons:Ztones-Unofficial:2.3.2-GTNH") {
+        transitive = false
+    }
 }

@@ -6,9 +6,12 @@ import java.util.List;
 import net.minecraft.block.Block;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.init.Blocks;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 
 import portablejim.bbw.basics.Point3d;
+import portablejim.bbw.compat.ztones.Ztones;
 import vazkii.botania.api.item.IBlockProvider;
 
 /**
@@ -78,6 +81,11 @@ public class BasicPlayerShim implements IPlayerShim {
     public boolean useItem(ItemStack itemStack, boolean isNBTSensitive) {
         if (itemStack == null || player.inventory == null || player.inventory.mainInventory == null) {
             return false;
+        }
+
+        if (Ztones.isLoaded() && player.inventory.hasItem(Ztones.getOfanix())
+                && itemStack.getItem() == Item.getItemFromBlock(Blocks.cobblestone)) {
+            return true;
         }
 
         // Reverse direction to leave hotbar to last.
