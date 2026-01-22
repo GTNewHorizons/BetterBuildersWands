@@ -10,7 +10,7 @@ public class Ztones {
     private static boolean isLoaded = false;
 
     public static void init() {
-        isLoaded = true;
+        isLoaded = (OFANIX != null);
     }
 
     public static Item getOfanix() {
