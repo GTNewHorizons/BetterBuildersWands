@@ -19,8 +19,8 @@ public class CreativePlayerShim extends BasicPlayerShim implements IPlayerShim {
     }
 
     @Override
-    public boolean useItem(ItemStack itemStack, boolean isNBTSensitive) {
-        return true;
+    public int useItem(ItemStack itemStack, boolean isNBTSensitive) {
+        return itemStack.stackSize;
     }
 
     @Override
