@@ -25,9 +25,9 @@ import cpw.mods.fml.common.Loader;
 import cpw.mods.fml.common.Optional;
 import portablejim.bbw.BetterBuildersWandsMod;
 import portablejim.bbw.basics.Point3d;
+import portablejim.bbw.compat.ztones.Ztones;
 import portablejim.bbw.core.MEHandler;
 import portablejim.bbw.network.SynchronizeAEItemQuantity;
-import portablejim.bbw.compat.ztones.Ztones;
 import vazkii.botania.api.item.IBlockProvider;
 
 /**
