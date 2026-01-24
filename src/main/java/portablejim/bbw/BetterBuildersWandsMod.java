@@ -26,6 +26,7 @@ import cpw.mods.fml.common.registry.GameRegistry;
 import cpw.mods.fml.relauncher.Side;
 import portablejim.bbw.compat.architecturecraft.ArchitectureCraftCustomMapping;
 import portablejim.bbw.compat.forestrymc.ForestryMCCustomMapping;
+import portablejim.bbw.compat.ztones.Ztones;
 import portablejim.bbw.core.ConfigValues;
 import portablejim.bbw.core.OopsCommand;
 import portablejim.bbw.core.conversion.CustomMappingManager;
@@ -199,6 +200,10 @@ public class BetterBuildersWandsMod {
         }
         if (Loader.isModLoaded("Forestry")) {
             ForestryMCCustomMapping.register();
+        }
+
+        if (Loader.isModLoaded("Ztones")) {
+            Ztones.init();
         }
     }
 

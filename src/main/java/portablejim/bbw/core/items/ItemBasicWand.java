@@ -7,6 +7,7 @@ import net.minecraft.block.Block;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.init.Blocks;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
@@ -21,6 +22,7 @@ import portablejim.bbw.BetterBuildersWandsMod;
 import portablejim.bbw.basics.EnumFluidLock;
 import portablejim.bbw.basics.EnumLock;
 import portablejim.bbw.basics.Point3d;
+import portablejim.bbw.compat.ztones.Ztones;
 import portablejim.bbw.core.WandWorker;
 import portablejim.bbw.core.conversion.CustomMapping;
 import portablejim.bbw.core.wands.IWand;
@@ -78,6 +80,17 @@ public abstract class ItemBasicWand extends Item implements IWandItem {
                 int numBlocks = Math.min(
                         wand.getMaxBlocks(itemstack),
                         playerShim.countItems(sourceItems, customMapping != null && customMapping.shouldCopyTileNBT()));
+
+                if (Ztones.isLoaded() && sourceItems.getItem() == Item.getItemFromBlock(Blocks.cobblestone)
+                        && player.inventory.hasItem(Ztones.getOfanix())) {
+                    numBlocks = wand.getMaxBlocks(itemstack);
+                } else {
+                    numBlocks = Math.min(
+                            wand.getMaxBlocks(itemstack),
+                            playerShim.countItems(
+                                    sourceItems,
+                                    customMapping != null && customMapping.shouldCopyTileNBT()));
+                }
 
                 // FMLLog.info("Max blocks: %d (%d|%d", numBlocks, this.wand.getMaxBlocks(itemstack),
                 // playerShim.countItems(sourceItems));

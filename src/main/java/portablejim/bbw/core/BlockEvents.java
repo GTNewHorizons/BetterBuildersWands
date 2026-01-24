@@ -4,6 +4,8 @@ import java.util.LinkedList;
 
 import net.minecraft.block.Block;
 import net.minecraft.client.renderer.RenderGlobal;
+import net.minecraft.init.Blocks;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.AxisAlignedBB;
@@ -16,6 +18,7 @@ import org.lwjgl.opengl.GL11;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import portablejim.bbw.BetterBuildersWandsMod;
 import portablejim.bbw.basics.Point3d;
+import portablejim.bbw.compat.ztones.Ztones;
 import portablejim.bbw.core.conversion.CustomMapping;
 import portablejim.bbw.core.items.IWandItem;
 import portablejim.bbw.core.wands.IWand;
@@ -57,11 +60,19 @@ public class BlockEvents {
                     int meta = worldShim.getMetadata(clickedPos);
                     CustomMapping customMapping = BetterBuildersWandsMod.instance.mappingManager
                             .getMapping(targetedBlock, meta);
-                    int numBlocks = Math.min(
-                            wand.getMaxBlocks(event.currentItem),
-                            playerShim.countItems(
-                                    sourceItems,
-                                    customMapping != null && customMapping.shouldCopyTileNBT()));
+
+                    int numBlocks;
+
+                    if (Ztones.isLoaded() && sourceItems.getItem() == Item.getItemFromBlock(Blocks.cobblestone)
+                            && playerShim.getPlayer().inventory.hasItem(Ztones.getOfanix())) {
+                        numBlocks = wand.getMaxBlocks(event.currentItem);
+                    } else {
+                        numBlocks = Math.min(
+                                wand.getMaxBlocks(event.currentItem),
+                                playerShim.countItems(
+                                        sourceItems,
+                                        customMapping != null && customMapping.shouldCopyTileNBT()));
+                    }
 
                     LinkedList<Point3d> blocks = worker.getBlockPositionList(
                             clickedPos,
