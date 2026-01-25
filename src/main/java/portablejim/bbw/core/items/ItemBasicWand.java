@@ -77,9 +77,7 @@ public abstract class ItemBasicWand extends Item implements IWandItem {
             if (sourceItems != null && sourceItems.getItem() instanceof ItemBlock) {
                 CustomMapping customMapping = getCustomMapping(worldShim, playerShim, clickedPos);
 
-                int numBlocks = Math.min(
-                        wand.getMaxBlocks(itemstack),
-                        playerShim.countItems(sourceItems, customMapping != null && customMapping.shouldCopyTileNBT()));
+                int numBlocks;
 
                 if (Ztones.isLoaded() && sourceItems.getItem() == Item.getItemFromBlock(Blocks.cobblestone)
                         && player.inventory.hasItem(Ztones.getOfanix())) {
