@@ -13,7 +13,7 @@ dependencies {
     }
     implementation('com.github.GTNewHorizons:Applied-Energistics-2-Unofficial:rv3-beta-839-GTNH:dev')
     compileOnly('com.github.GTNewHorizons:AE2FluidCraft-Rework:1.5.62-gtnh:dev') {transitive = false}
-    compileOnly("com.github.GTNewHorizons:Ztones-Unofficial:2.3.2-GTNH") {
+    compileOnly("curse.maven:ztones-224369:2223720") {
         transitive = false
     }
 }
