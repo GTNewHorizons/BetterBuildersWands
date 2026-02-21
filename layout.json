@@ -1,0 +1,14 @@
+{
+  "ideaDirPath": "D:/Github/BetterBuildersWands",
+  "modulesMap": {
+    "BetterBuildersWands": "D:/Github/BetterBuildersWands/BetterBuildersWands.iml",
+    "BetterBuildersWands:api": "D:/Github/BetterBuildersWands/BetterBuildersWands.api.iml",
+    "BetterBuildersWands:ideVirtualMain": "D:/Github/BetterBuildersWands/BetterBuildersWands.ideVirtualMain.iml",
+    "BetterBuildersWands:injectedInterfaces": "D:/Github/BetterBuildersWands/BetterBuildersWands.injectedInterfaces.iml",
+    "BetterBuildersWands:injectedTags": "D:/Github/BetterBuildersWands/BetterBuildersWands.injectedTags.iml",
+    "BetterBuildersWands:main": "D:/Github/BetterBuildersWands/BetterBuildersWands.main.iml",
+    "BetterBuildersWands:mcLauncher": "D:/Github/BetterBuildersWands/BetterBuildersWands.mcLauncher.iml",
+    "BetterBuildersWands:patchedMc": "D:/Github/BetterBuildersWands/BetterBuildersWands.patchedMc.iml",
+    "BetterBuildersWands:test": "D:/Github/BetterBuildersWands/BetterBuildersWands.test.iml"
+  }
+}
