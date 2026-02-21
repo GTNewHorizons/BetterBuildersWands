@@ -122,14 +122,14 @@ public class BasicPlayerShim implements IPlayerShim {
             return 0;
         }
 
-        if (Ztones.isLoaded() && player.inventory.hasItem(Ztones.getOfanix())
-                && itemStack.getItem() == Item.getItemFromBlock(Blocks.cobblestone)) {
-            return 1;
-        }
-
         // Reverse direction to leave hotbar to last.
         int toUse = 0;
         final int needUse = itemStack.stackSize;
+
+        if (Ztones.isLoaded() && player.inventory.hasItem(Ztones.getOfanix())
+                && itemStack.getItem() == Item.getItemFromBlock(Blocks.cobblestone)) {
+            return needUse;
+        }
 
         if (aeEnabled) {
             toUse += getAEItem(itemStack, needUse, true);
