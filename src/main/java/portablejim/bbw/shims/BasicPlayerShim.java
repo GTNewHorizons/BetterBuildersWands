@@ -12,8 +12,6 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 
-import com.glodblock.github.util.Util;
-
 import appeng.api.config.Actionable;
 import appeng.api.config.SecurityPermissions;
 import appeng.api.networking.security.PlayerSource;
@@ -38,7 +36,6 @@ public class BasicPlayerShim implements IPlayerShim {
     private final EntityPlayer player;
     private final boolean providersEnabled;
     private final boolean aeEnabled;
-    private final boolean ae2fcEnabled;
     // Inventory > Hotbar > Backhand
     private final int[] slotPriority;
 
@@ -48,7 +45,6 @@ public class BasicPlayerShim implements IPlayerShim {
         this.player = player;
         this.providersEnabled = areProvidersEnabled();
         this.aeEnabled = Loader.isModLoaded("appliedenergistics2");
-        this.ae2fcEnabled = Loader.isModLoaded("ae2fc");
         this.slotPriority = new int[this.player.inventory.mainInventory.length];
 
         int idx = 0;
@@ -208,8 +204,7 @@ public class BasicPlayerShim implements IPlayerShim {
     public int getAEItem(ItemStack item, int size, boolean MODULATE) {
         if (!player.worldObj.isRemote) {
             WirelessTerminalGuiObject obj = MEHandler.getTerminalGuiObject(player);
-            if (obj != null
-                    && (obj.rangeCheck() || (ae2fcEnabled && Util.hasInfinityBoosterCard(obj.getItemStack())))) {
+            if (obj != null && obj.rangeCheck()) {
                 if (MEHandler.securityCheck(player, obj.getGrid(), SecurityPermissions.EXTRACT)) {
                     IMEMonitor<IAEItemStack> inventory = obj.getItemInventory();
                     if (inventory == null) return 0;

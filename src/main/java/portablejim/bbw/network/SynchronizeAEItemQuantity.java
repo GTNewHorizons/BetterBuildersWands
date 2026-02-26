@@ -3,13 +3,10 @@ package portablejim.bbw.network;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
 
-import com.glodblock.github.util.Util;
-
 import appeng.api.storage.IMEMonitor;
 import appeng.api.storage.data.IAEItemStack;
 import appeng.helpers.WirelessTerminalGuiObject;
 import appeng.util.item.AEItemStack;
-import cpw.mods.fml.common.Loader;
 import cpw.mods.fml.common.network.ByteBufUtils;
 import cpw.mods.fml.common.network.simpleimpl.IMessage;
 import cpw.mods.fml.common.network.simpleimpl.IMessageHandler;
@@ -84,8 +81,7 @@ public abstract class SynchronizeAEItemQuantity<T extends IMessage> implements I
             IMEMonitor<IAEItemStack> inventory = obj.getItemInventory();
 
             if (inventory != null) {
-                boolean isInRange = obj.rangeCheck()
-                        || (Loader.isModLoaded("ae2fc") && Util.hasInfinityBoosterCard(obj.getItemStack()));
+                boolean isInRange = obj.rangeCheck();
 
                 if (isInRange) {
                     IAEItemStack aeStack = AEItemStack.create(message.stack);
