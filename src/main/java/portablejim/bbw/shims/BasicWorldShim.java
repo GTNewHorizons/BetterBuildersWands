@@ -17,7 +17,7 @@ import portablejim.bbw.basics.Point3d;
  */
 public class BasicWorldShim implements IWorldShim {
 
-    private World world;
+    private final World world;
 
     public BasicWorldShim(World world) {
 
@@ -76,7 +76,7 @@ public class BasicWorldShim implements IWorldShim {
         if (box == null) return false;
 
         List entitiesWithinAABB = world.getEntitiesWithinAABB(EntityLivingBase.class, box);
-        return entitiesWithinAABB.size() > 0;
+        return !entitiesWithinAABB.isEmpty();
     }
 
     @Override

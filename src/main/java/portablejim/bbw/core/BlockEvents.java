@@ -82,7 +82,7 @@ public class BlockEvents {
                             wandItem.getFaceLock(event.currentItem),
                             wandItem.getFluidMode(event.currentItem),
                             customMapping != null && customMapping.shouldCopyTileNBT());
-                    if (blocks.size() > 0) {
+                    if (!blocks.isEmpty()) {
                         GL11.glDisable(GL11.GL_TEXTURE_2D);
                         GL11.glEnable(GL11.GL_BLEND);
                         GL11.glDepthMask(true);

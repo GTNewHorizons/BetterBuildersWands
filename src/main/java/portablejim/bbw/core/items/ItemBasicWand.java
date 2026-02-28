@@ -1,6 +1,5 @@
 package portablejim.bbw.core.items;
 
-import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -18,6 +17,7 @@ import net.minecraft.world.World;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.common.util.ForgeDirection;
 
+import cpw.mods.fml.common.Loader;
 import portablejim.bbw.BetterBuildersWandsMod;
 import portablejim.bbw.basics.EnumFluidLock;
 import portablejim.bbw.basics.EnumLock;
@@ -56,9 +56,11 @@ public abstract class ItemBasicWand extends Item implements IWandItem {
         }
 
         if (!world.isRemote) {
-            IPlayerShim playerShim = new BasicPlayerShim(player);
+            IPlayerShim playerShim;
             if (player.capabilities.isCreativeMode) {
                 playerShim = new CreativePlayerShim(player);
+            } else {
+                playerShim = new BasicPlayerShim(player);
             }
             IWorldShim worldShim = new BasicWorldShim(world);
 
@@ -73,8 +75,7 @@ public abstract class ItemBasicWand extends Item implements IWandItem {
             ItemStack sourceItems = worker.getProperItemStack(worldShim, playerShim, clickedPos);
 
             if (sourceItems != null && sourceItems.getItem() instanceof ItemBlock) {
-                CustomMapping customMapping = BetterBuildersWandsMod.instance.mappingManager
-                        .getMapping(worldShim.getBlock(clickedPos), worldShim.getMetadata(clickedPos));
+                CustomMapping customMapping = getCustomMapping(worldShim, playerShim, clickedPos);
 
                 int numBlocks;
 
@@ -100,9 +101,9 @@ public abstract class ItemBasicWand extends Item implements IWandItem {
                         getFluidMode(itemstack),
                         customMapping != null && customMapping.shouldCopyTileNBT());
 
-                ArrayList<Point3d> placedBlocks = worker
-                        .placeBlocks(itemstack, blocks, clickedPos, sourceItems, side, hitX, hitY, hitZ);
-                if (placedBlocks.size() > 0) {
+                List<Point3d> placedBlocks = worker
+                        .placeBlocks(itemstack, blocks, clickedPos, sourceItems, playerShim, side, hitX, hitY, hitZ);
+                if (!placedBlocks.isEmpty()) {
                     int[] placedIntArray = new int[placedBlocks.size() * 3];
                     for (int i = 0; i < placedBlocks.size(); i++) {
                         Point3d currentPoint = placedBlocks.get(i);
@@ -196,6 +197,23 @@ public abstract class ItemBasicWand extends Item implements IWandItem {
     public boolean hitEntity(ItemStack p_77644_1_, EntityLivingBase p_77644_2_, EntityLivingBase p_77644_3_) {
         p_77644_1_.damageItem(2, p_77644_3_);
         return true;
+    }
+
+    public static CustomMapping getCustomMapping(IWorldShim worldShim, IPlayerShim playerShim, Point3d clickedPos) {
+        if (Loader.isModLoaded("backhand")) {
+            ItemStack backhandItem = WandWorker.getProperItemStackBackhand(playerShim);
+
+            if (backhandItem != null && backhandItem.getItem() instanceof ItemBlock) {
+                Block offhandBlock = ((ItemBlock) backhandItem.getItem()).field_150939_a;
+                int meta = backhandItem.getItemDamage();
+                return new CustomMapping(offhandBlock, meta, backhandItem, offhandBlock, meta);
+            }
+        }
+
+        Block worldBlock = worldShim.getBlock(clickedPos);
+        int worldMeta = worldShim.getMetadata(clickedPos);
+
+        return BetterBuildersWandsMod.instance.mappingManager.getMapping(worldBlock, worldMeta);
     }
 
     public void setMode(ItemStack item, EnumLock mode) {
