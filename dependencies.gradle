@@ -1,17 +1,17 @@
 // Add your dependencies here
 
 dependencies {
-    compileOnly("com.github.GTNewHorizons:Botania:1.12.12-GTNH:dev")
-    compileOnly("com.github.GTNewHorizons:ArchitectureCraft:1.11.0") {
+    compileOnly("com.github.GTNewHorizons:Botania:1.13.15-GTNH:dev")
+    compileOnly("com.github.GTNewHorizons:ArchitectureCraft:1.12.7") {
         transitive = false
     }
-    compileOnly("com.github.GTNewHorizons:ForestryMC:4.10.13") {
+    compileOnly("com.github.GTNewHorizons:ForestryMC:4.11.6") {
         transitive = false
     }
-    compileOnly("com.github.GTNewHorizons:Backhand:1.7.6:dev") {
+    compileOnly("com.github.GTNewHorizons:Backhand:1.8.3:dev") {
         transitive = false
     }
-    compileOnly('com.github.GTNewHorizons:Applied-Energistics-2-Unofficial:rv3-beta-772-GTNH:dev')
+    compileOnly('com.github.GTNewHorizons:Applied-Energistics-2-Unofficial:rv3-beta-847-GTNH:dev')
     compileOnly("com.github.GTNewHorizons:Ztones-Unofficial:2.3.2-GTNH") {
         transitive = false
     }
