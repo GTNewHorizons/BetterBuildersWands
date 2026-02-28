@@ -202,22 +202,17 @@ public abstract class ItemBasicWand extends Item implements IWandItem {
     public static CustomMapping getCustomMapping(IWorldShim worldShim, IPlayerShim playerShim, Point3d clickedPos) {
         if (Loader.isModLoaded("backhand")) {
             ItemStack backhandItem = WandWorker.getProperItemStackBackhand(playerShim);
-            if (backhandItem != null && backhandItem.getItem() instanceof ItemBlock) {
-                Block offhandBlock = ((ItemBlock) backhandItem.getItem()).field_150939_a;
-                int meta = backhandItem.getItemDamage();
-                CustomMapping customMapping = BetterBuildersWandsMod.instance.mappingManager
-                        .getMapping(offhandBlock, meta);
 
-                if (customMapping == null) {
-                    customMapping = new CustomMapping(offhandBlock, meta, backhandItem, offhandBlock, meta);
-                    BetterBuildersWandsMod.instance.mappingManager.setMapping(customMapping);
-                }
-                return customMapping;
+            if (backhandItem != null && backhandItem.getItem() instanceof ItemBlock itemBlock) {
+                Block offhandBlock = itemBlock.field_150939_a;
+                int meta = backhandItem.getItemDamage();
+                return new CustomMapping(offhandBlock, meta, backhandItem, offhandBlock, meta);
             }
         }
 
         Block worldBlock = worldShim.getBlock(clickedPos);
         int worldMeta = worldShim.getMetadata(clickedPos);
+
         return BetterBuildersWandsMod.instance.mappingManager.getMapping(worldBlock, worldMeta);
     }
 
