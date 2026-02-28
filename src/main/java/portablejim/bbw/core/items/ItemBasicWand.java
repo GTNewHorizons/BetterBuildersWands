@@ -203,8 +203,8 @@ public abstract class ItemBasicWand extends Item implements IWandItem {
         if (Loader.isModLoaded("backhand")) {
             ItemStack backhandItem = WandWorker.getProperItemStackBackhand(playerShim);
 
-            if (backhandItem != null && backhandItem.getItem() instanceof ItemBlock itemBlock) {
-                Block offhandBlock = itemBlock.field_150939_a;
+            if (backhandItem != null && backhandItem.getItem() instanceof ItemBlock) {
+                Block offhandBlock = ((ItemBlock) backhandItem.getItem()).field_150939_a;
                 int meta = backhandItem.getItemDamage();
                 return new CustomMapping(offhandBlock, meta, backhandItem, offhandBlock, meta);
             }
