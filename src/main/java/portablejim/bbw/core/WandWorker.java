@@ -288,67 +288,63 @@ public class WandWorker {
             ItemStack sourceItems, IPlayerShim playerShim, int side, float hitX, float hitY, float hitZ) {
         ArrayList<Point3d> placedBlocks = new ArrayList<>();
 
-        CustomMapping mapping = BetterBuildersWandsMod.instance.mappingManager
-                .getMapping(world.getBlock(originalBlock), world.getMetadata(originalBlock));
         ItemStack needItem = sourceItems.copy();
-
         if (Loader.isModLoaded("backhand")) {
             ItemStack backhandItem = WandWorker.getProperItemStackBackhand(playerShim);
-            Block targetBlock = null;
-            int meta = 0;
-
-            if (backhandItem != null) {
-                targetBlock = Block.getBlockFromItem(backhandItem.getItem());
-                meta = backhandItem.getItemDamage();
-            }
-
-            if (targetBlock == null || targetBlock == Blocks.air) {
-                targetBlock = Block.getBlockFromItem(sourceItems.getItem());
-                meta = sourceItems.getItemDamage();
-            }
-
-            if (targetBlock != null && targetBlock != Blocks.air) {
-                mapping = BetterBuildersWandsMod.instance.mappingManager.getMapping(targetBlock, meta);
+            if (backhandItem != null && backhandItem.getItem() instanceof ItemBlock) {
+                needItem = backhandItem.copy();
             }
         }
 
+        Block targetBlock = Block.getBlockFromItem(needItem.getItem());
+        int targetMeta = needItem.getItemDamage();
+        CustomMapping mapping = BetterBuildersWandsMod.instance.mappingManager.getMapping(targetBlock, targetMeta);
+        boolean isNBTSensitive = mapping != null && mapping.shouldCopyTileNBT();
+
+        boolean isCreative = playerShim.isCreative();
         Point3d[] blockPoss = blockPosList.toArray(new Point3d[0]);
         needItem.stackSize = blockPoss.length;
-        int takeFromInventory = player.useItem(needItem, mapping != null && mapping.shouldCopyTileNBT());
+        int takeFromInventory = playerShim.useItem(needItem, isNBTSensitive);;
+
         for (int i = 0; i < takeFromInventory; ++i) {
             Point3d blockPos = blockPoss[i];
-            boolean blockPlaceSuccess;
 
-            if (mapping != null) {
-                blockPlaceSuccess = world.setBlock(
-                        originalBlock,
-                        blockPos,
-                        mapping.getPlaceBlock(),
-                        mapping.getPlaceMeta(),
-                        mapping.shouldCopyTileNBT());
-            } else {
-                blockPlaceSuccess = world.copyBlock(originalBlock, blockPos);
-            }
+            ForgeDirection dir = ForgeDirection.getOrientation(side);
+            int clickX = blockPos.x - dir.offsetX;
+            int clickY = blockPos.y - dir.offsetY;
+            int clickZ = blockPos.z - dir.offsetZ;
 
-            if (blockPlaceSuccess) {
-                Block block = world.getBlock(originalBlock);
-                if (Loader.isModLoaded("backhand")) {
-                    if (sourceItems.getItem() instanceof ItemBlock) {
-                        block = ((ItemBlock) sourceItems.getItem()).field_150939_a;
+            boolean success = needItem.tryPlaceItemIntoWorld(
+                    playerShim.getPlayer(),
+                    world.getWorld(),
+                    clickX,
+                    clickY,
+                    clickZ,
+                    side,
+                    hitX,
+                    hitY,
+                    hitZ);
+
+            if (success) {
+                placedBlocks.add(blockPos);
+                if (isNBTSensitive) {
+                    TileEntity sourceTile = world.getTile(originalBlock);
+                    TileEntity destTile = world.getTile(blockPos);
+                    if (sourceTile != null && destTile != null) {
+                        NBTTagCompound nbt = new NBTTagCompound();
+                        sourceTile.writeToNBT(nbt);
+                        nbt.setInteger("x", blockPos.x);
+                        nbt.setInteger("y", blockPos.y);
+                        nbt.setInteger("z", blockPos.z);
+                        destTile.readFromNBT(nbt);
+                        destTile.markDirty();
+                        world.getWorld().markBlockForUpdate(blockPos.x, blockPos.y, blockPos.z);
                     }
                 }
-                world.playPlaceAtBlock(blockPos, block);
-                placedBlocks.add(blockPos);
-                if (!player.isCreative()) {
-                    wand.placeBlock(wandItem, player.getPlayer());
+
+                if (!isCreative) {
+                    wand.placeBlock(wandItem, playerShim.getPlayer());
                 }
-                block.onBlockPlacedBy(
-                        world.getWorld(),
-                        blockPos.x,
-                        blockPos.y,
-                        blockPos.z,
-                        player.getPlayer(),
-                        sourceItems);
             }
         }
 
