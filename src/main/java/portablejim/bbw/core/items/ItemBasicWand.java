@@ -206,6 +206,12 @@ public abstract class ItemBasicWand extends Item implements IWandItem {
             if (backhandItem != null && backhandItem.getItem() instanceof ItemBlock) {
                 Block offhandBlock = ((ItemBlock) backhandItem.getItem()).field_150939_a;
                 int meta = backhandItem.getItemDamage();
+
+                CustomMapping existing = BetterBuildersWandsMod.instance.mappingManager.getMapping(offhandBlock, meta);
+                if (existing != null) {
+                    return existing;
+                }
+
                 return new CustomMapping(offhandBlock, meta, backhandItem, offhandBlock, meta);
             }
         }
