@@ -23,7 +23,7 @@ import portablejim.bbw.BetterBuildersWandsMod;
 import portablejim.bbw.basics.EnumFluidLock;
 import portablejim.bbw.basics.EnumLock;
 import portablejim.bbw.basics.Point3d;
-import portablejim.bbw.core.conversion.CustomMapping;
+import portablejim.bbw.core.conversion.ICustomMapping;
 import portablejim.bbw.core.wands.IWand;
 import portablejim.bbw.shims.IPlayerShim;
 import portablejim.bbw.shims.IWorldShim;
@@ -66,9 +66,9 @@ public class WandWorker {
         }
 
         if (!usedBackhand) {
-            CustomMapping customMapping = BetterBuildersWandsMod.instance.mappingManager.getMapping(block, meta);
+            ICustomMapping customMapping = BetterBuildersWandsMod.instance.mappingManager.getMapping(block, meta);
             if (customMapping != null) {
-                return customMapping.getItems(world, blockPos);
+                return customMapping.getItems(world, player, blockPos);
             }
         }
 
@@ -298,7 +298,7 @@ public class WandWorker {
 
         Block targetBlock = Block.getBlockFromItem(needItem.getItem());
         int targetMeta = needItem.getItemDamage();
-        CustomMapping mapping = BetterBuildersWandsMod.instance.mappingManager.getMapping(targetBlock, targetMeta);
+        ICustomMapping mapping = BetterBuildersWandsMod.instance.mappingManager.getMapping(targetBlock, targetMeta);
         boolean isNBTSensitive = mapping != null && mapping.shouldCopyTileNBT();
 
         boolean isCreative = playerShim.isCreative();

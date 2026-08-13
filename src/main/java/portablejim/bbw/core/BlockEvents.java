@@ -19,7 +19,7 @@ import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import portablejim.bbw.BetterBuildersWandsMod;
 import portablejim.bbw.basics.Point3d;
 import portablejim.bbw.compat.ztones.Ztones;
-import portablejim.bbw.core.conversion.CustomMapping;
+import portablejim.bbw.core.conversion.ICustomMapping;
 import portablejim.bbw.core.items.IWandItem;
 import portablejim.bbw.core.wands.IWand;
 import portablejim.bbw.shims.BasicPlayerShim;
@@ -58,7 +58,7 @@ public class BlockEvents {
                 if (sourceItems != null && sourceItems.getItem() instanceof ItemBlock) {
                     Block targetedBlock = worldShim.getBlock(clickedPos);
                     int meta = worldShim.getMetadata(clickedPos);
-                    CustomMapping customMapping = BetterBuildersWandsMod.instance.mappingManager
+                    ICustomMapping customMapping = BetterBuildersWandsMod.instance.mappingManager
                             .getMapping(targetedBlock, meta);
 
                     int numBlocks;
