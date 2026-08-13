@@ -303,8 +303,8 @@ public class WandWorker {
 
         boolean isCreative = playerShim.isCreative();
         Point3d[] blockPoss = blockPosList.toArray(new Point3d[0]);
-        needItem.stackSize = blockPoss.length;
-        int takeFromInventory = playerShim.useItem(needItem, isNBTSensitive);;
+        needItem.stackSize = blockPoss.length * sourceItems.stackSize;
+        int takeFromInventory = playerShim.useItem(needItem, isNBTSensitive) / sourceItems.stackSize;
 
         for (int i = 0; i < takeFromInventory; ++i) {
             Point3d blockPos = blockPoss[i];
