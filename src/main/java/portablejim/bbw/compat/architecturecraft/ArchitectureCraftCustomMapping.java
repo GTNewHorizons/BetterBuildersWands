@@ -10,6 +10,7 @@ import gcewing.architecture.common.tile.TileShape;
 import portablejim.bbw.BetterBuildersWandsMod;
 import portablejim.bbw.basics.Point3d;
 import portablejim.bbw.core.conversion.CustomMapping;
+import portablejim.bbw.shims.IPlayerShim;
 import portablejim.bbw.shims.IWorldShim;
 
 public class ArchitectureCraftCustomMapping extends CustomMapping {
@@ -22,7 +23,7 @@ public class ArchitectureCraftCustomMapping extends CustomMapping {
     }
 
     @Override
-    public ItemStack getItems(IWorldShim world, Point3d point) {
+    public ItemStack getItems(IWorldShim world, IPlayerShim player, Point3d point) {
         TileEntity tileEntity = world.getTile(point);
         if (tileEntity instanceof TileShape) {
             TileShape shapeTile = ((TileShape) tileEntity);
@@ -30,7 +31,7 @@ public class ArchitectureCraftCustomMapping extends CustomMapping {
             itemStack.setItemDamage(getMeta());
             return itemStack;
         }
-        return super.getItems(world, point);
+        return super.getItems(world, player, point);
     }
 
     public static void register() {

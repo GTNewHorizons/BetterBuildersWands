@@ -12,6 +12,7 @@ import forestry.plugins.PluginManager;
 import portablejim.bbw.BetterBuildersWandsMod;
 import portablejim.bbw.basics.Point3d;
 import portablejim.bbw.core.conversion.CustomMapping;
+import portablejim.bbw.shims.IPlayerShim;
 import portablejim.bbw.shims.IWorldShim;
 
 public class ForestryMCCustomMapping extends CustomMapping {
@@ -21,12 +22,12 @@ public class ForestryMCCustomMapping extends CustomMapping {
     }
 
     @Override
-    public ItemStack getItems(IWorldShim world, Point3d point) {
+    public ItemStack getItems(IWorldShim world, IPlayerShim player, Point3d point) {
         TileEntity tileEntity = world.getTile(point);
         if (tileEntity instanceof TileWood) {
             return TileWood.getPickBlock(getLookBlock(), world.getWorld(), point.x, point.y, point.z);
         }
-        return super.getItems(world, point);
+        return super.getItems(world, player, point);
     }
 
     public static void register() {

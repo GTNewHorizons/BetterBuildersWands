@@ -16,7 +16,7 @@ import portablejim.bbw.BetterBuildersWandsMod;
  */
 public class CustomMappingManager {
 
-    ArrayList<CustomMapping> mappings;
+    ArrayList<ICustomMapping> mappings;
 
     public CustomMappingManager() {
         mappings = new ArrayList<>();
@@ -68,8 +68,8 @@ public class CustomMappingManager {
         return null;
     }
 
-    public CustomMapping getMapping(Block block, int meta) {
-        for (CustomMapping mapping : mappings) {
+    public ICustomMapping getMapping(Block block, int meta) {
+        for (ICustomMapping mapping : mappings) {
             if (mapping.getLookBlock() == block && mapping.getMeta() == meta) {
                 return mapping;
             }
@@ -77,9 +77,9 @@ public class CustomMappingManager {
         return null;
     }
 
-    public void setMapping(CustomMapping newMapping) {
+    public void setMapping(ICustomMapping newMapping) {
         for (int i = 0; i < mappings.size(); i++) {
-            CustomMapping current = mappings.get(i);
+            ICustomMapping current = mappings.get(i);
             if (current.getLookBlock() == newMapping.getLookBlock() && current.getMeta() == newMapping.getMeta()) {
                 if (current.equals(newMapping)) {
                     // Already there

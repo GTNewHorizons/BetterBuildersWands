@@ -25,6 +25,7 @@ import portablejim.bbw.basics.Point3d;
 import portablejim.bbw.compat.ztones.Ztones;
 import portablejim.bbw.core.WandWorker;
 import portablejim.bbw.core.conversion.CustomMapping;
+import portablejim.bbw.core.conversion.ICustomMapping;
 import portablejim.bbw.core.wands.IWand;
 import portablejim.bbw.shims.BasicPlayerShim;
 import portablejim.bbw.shims.BasicWorldShim;
@@ -75,7 +76,7 @@ public abstract class ItemBasicWand extends Item implements IWandItem {
             ItemStack sourceItems = worker.getProperItemStack(worldShim, playerShim, clickedPos);
 
             if (sourceItems != null && sourceItems.getItem() instanceof ItemBlock) {
-                CustomMapping customMapping = getCustomMapping(worldShim, playerShim, clickedPos);
+                ICustomMapping customMapping = getCustomMapping(worldShim, playerShim, clickedPos);
 
                 int numBlocks;
 
@@ -199,7 +200,7 @@ public abstract class ItemBasicWand extends Item implements IWandItem {
         return true;
     }
 
-    public static CustomMapping getCustomMapping(IWorldShim worldShim, IPlayerShim playerShim, Point3d clickedPos) {
+    public static ICustomMapping getCustomMapping(IWorldShim worldShim, IPlayerShim playerShim, Point3d clickedPos) {
         if (Loader.isModLoaded("backhand")) {
             ItemStack backhandItem = WandWorker.getProperItemStackBackhand(playerShim);
 
@@ -207,7 +208,7 @@ public abstract class ItemBasicWand extends Item implements IWandItem {
                 Block offhandBlock = ((ItemBlock) backhandItem.getItem()).field_150939_a;
                 int meta = backhandItem.getItemDamage();
 
-                CustomMapping existing = BetterBuildersWandsMod.instance.mappingManager.getMapping(offhandBlock, meta);
+                ICustomMapping existing = BetterBuildersWandsMod.instance.mappingManager.getMapping(offhandBlock, meta);
                 if (existing != null) {
                     return existing;
                 }

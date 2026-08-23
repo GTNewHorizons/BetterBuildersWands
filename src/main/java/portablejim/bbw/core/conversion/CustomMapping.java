@@ -4,12 +4,13 @@ import net.minecraft.block.Block;
 import net.minecraft.item.ItemStack;
 
 import portablejim.bbw.basics.Point3d;
+import portablejim.bbw.shims.IPlayerShim;
 import portablejim.bbw.shims.IWorldShim;
 
 /**
  * Created by james on 18/12/15.
  */
-public class CustomMapping {
+public class CustomMapping implements ICustomMapping {
 
     private final Block lookBlock;
     private final int meta;
@@ -45,7 +46,7 @@ public class CustomMapping {
         return items;
     }
 
-    public ItemStack getItems(IWorldShim world, Point3d point) {
+    public ItemStack getItems(IWorldShim world, IPlayerShim player, Point3d point) {
         return getItems();
     }
 
@@ -61,11 +62,27 @@ public class CustomMapping {
         return shouldCopyTileNBT;
     }
 
+    @Override
+    public boolean equals(Object that) {
+        return this == that || (that instanceof CustomMapping && this.equals((CustomMapping) that));
+    }
+
     public boolean equals(CustomMapping that) {
         return this.lookBlock == that.lookBlock && this.meta == that.meta
                 && this.items == that.items
                 && this.placeBlock == that.placeBlock
                 && this.placeMeta == that.placeMeta
                 && this.shouldCopyTileNBT == that.shouldCopyTileNBT;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = lookBlock.hashCode();
+        result = 31 * result + meta;
+        result = 31 * result + items.hashCode();
+        result = 31 * result + placeBlock.hashCode();
+        result = 31 * result + placeMeta;
+        result = 31 * result + Boolean.hashCode(shouldCopyTileNBT);
+        return result;
     }
 }
