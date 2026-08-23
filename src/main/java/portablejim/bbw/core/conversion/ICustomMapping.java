@@ -10,7 +10,7 @@ import portablejim.bbw.shims.IWorldShim;
 public interface ICustomMapping {
 
     /**
-     * @return The meta of the block being looked at.
+     * @return The block being looked at.
      */
     Block getLookBlock();
 
