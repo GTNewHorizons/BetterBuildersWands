@@ -74,4 +74,15 @@ public class CustomMapping implements ICustomMapping {
                 && this.placeMeta == that.placeMeta
                 && this.shouldCopyTileNBT == that.shouldCopyTileNBT;
     }
+
+    @Override
+    public int hashCode() {
+        int result = lookBlock.hashCode();
+        result = 31 * result + meta;
+        result = 31 * result + items.hashCode();
+        result = 31 * result + placeBlock.hashCode();
+        result = 31 * result + placeMeta;
+        result = 31 * result + Boolean.hashCode(shouldCopyTileNBT);
+        return result;
+    }
 }
