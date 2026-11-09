@@ -37,6 +37,10 @@ public class ArchitectureCraftCustomMapping extends CustomMapping {
     public static void register() {
         BetterBuildersWandsMod.instance.mappingManager.setMapping(new ArchitectureCraftCustomMapping(SHAPE_BLOCK, 0));
         if (GLOWING_SHAPE_BLOCK != null) {
+            // Match glow shapes after GTNH ArchitectureCraft May 2026 change
+            BetterBuildersWandsMod.instance.mappingManager
+                    .setMapping(new ArchitectureCraftCustomMapping(GLOWING_SHAPE_BLOCK, 0));
+            // Match glow shapes before GTNH ArchitectureCraft May 2026 change
             BetterBuildersWandsMod.instance.mappingManager
                     .setMapping(new ArchitectureCraftCustomMapping(GLOWING_SHAPE_BLOCK, 15));
         }
