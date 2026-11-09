@@ -124,8 +124,6 @@ public class BetterBuildersWandsMod {
 
         blockCache = new StackedBlockManager();
         mappingManager = new CustomMappingManager();
-
-        mappingManager.loadConfig(configValues.OVERRIDES_RECIPES);
         /*
          * mappingManager.setMapping(new CustomMapping(Blocks.lapis_ore, 0, new ItemStack(Blocks.lapis_ore, 1, 4),
          * Blocks.lapis_ore, 0)); mappingManager.setMapping(new CustomMapping(Blocks.lit_redstone_ore, 0, new
@@ -139,6 +137,7 @@ public class BetterBuildersWandsMod {
 
     @EventHandler
     public void init(FMLInitializationEvent event) {
+        mappingManager.loadConfig(configValues.OVERRIDES_RECIPES);
         proxy.RegisterEvents();
 
         if (configValues.ENABLE_STONE_WAND) GameRegistry.addRecipe(
