@@ -100,6 +100,9 @@ public class BetterBuildersWandsMod {
         configValues = new ConfigValues(event.getSuggestedConfigurationFile());
         configValues.loadConfigFile();
 
+        itemStoneWand.setMaxDamage(configValues.STONE_WAND_DURABILITY);
+        itemIronWand.setMaxDamage(configValues.IRON_WAND_DURABILITY);
+
         itemDiamondWand = new ItemUnrestrictedWand(
                 new RestrictedWand(Item.ToolMaterial.EMERALD.getMaxUses()),
                 "Unrestricted",
