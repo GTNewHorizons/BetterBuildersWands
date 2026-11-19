@@ -26,6 +26,7 @@ public class ConfigValues {
     public static final int IRON_WAND_DURABILITY_DEFAULT = 250;
     public static final String IRON_WAND_DURABILITY_NAME = "iron_wand_durability";
     public static final String IRON_WAND_DURABILITY_DESCRIPTION = "Durability of the Iron Building Wand";
+    public static final String CONFIG_DURABILITY = "durability";
     public static final String CONFIG_WHYNOT = "why_not";
     public static final String CONFIG_GENERAL = "general";
 
@@ -103,19 +104,19 @@ public class ConfigValues {
         SOFT_BLACKLIST_SET = new TreeSet<String>(Arrays.asList(SOFT_BLACKLIST));
 
         STONE_WAND_DURABILITY = configFile.get(
-                CONFIG_GENERAL,
+                CONFIG_DURABILITY,
                 STONE_WAND_DURABILITY_NAME,
                 STONE_WAND_DURABILITY_DEFAULT,
                 STONE_WAND_DURABILITY_DESCRIPTION).getInt();
 
         IRON_WAND_DURABILITY = configFile.get(
-                CONFIG_GENERAL,
+                CONFIG_DURABILITY,
                 IRON_WAND_DURABILITY_NAME,
                 IRON_WAND_DURABILITY_DEFAULT,
                 IRON_WAND_DURABILITY_DESCRIPTION).getInt();
 
         DIAMOND_WAND_DURABILITY = configFile.get(
-                CONFIG_GENERAL,
+                CONFIG_DURABILITY,
                 DIAMOND_WAND_DURABILITY_NAME,
                 DIAMOND_WAND_DURABILITY_DEFAULT,
                 DIAMOND_WAND_DURABILITY_DESCRIPTION).getInt();
