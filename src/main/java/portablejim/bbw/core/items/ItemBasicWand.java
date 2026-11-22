@@ -12,12 +12,14 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.StatCollector;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.common.util.ForgeDirection;
 
 import cpw.mods.fml.common.Loader;
+import gcewing.architecture.common.tile.TileShape;
 import portablejim.bbw.BetterBuildersWandsMod;
 import portablejim.bbw.basics.EnumFluidLock;
 import portablejim.bbw.basics.EnumLock;
@@ -125,7 +127,14 @@ public abstract class ItemBasicWand extends Item implements IWandItem {
                         bbwCompound.setShort("fluidmask", (short) this.getDefaultFluidMode().mask);
                     }
                     bbwCompound.setIntArray("lastPlaced", placedIntArray);
-                    bbwCompound.setString("lastBlock", Item.itemRegistry.getNameForObject(sourceItems.getItem()));
+                    String blockString = Item.itemRegistry.getNameForObject(sourceItems.getItem());
+                    if (blockString.contains("ArchitectureCraft")) {
+                        NBTTagCompound tileCompound = new NBTTagCompound();
+                        TileEntity aTileEntity = world.getTileEntity(x, y, z);
+                        ((TileShape) aTileEntity).writeToNBT(tileCompound);
+                        bbwCompound.setTag("lastTile", tileCompound);
+                    }
+                    bbwCompound.setString("lastBlock", blockString);
                     bbwCompound.setInteger("lastDamage", sourceItems.getItemDamage());
                     bbwCompound.setInteger("lastPerBlock", sourceItems.stackSize);
                     itemstack.setTagInfo("bbw", bbwCompound);
