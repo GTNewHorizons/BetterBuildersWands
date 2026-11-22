@@ -10,10 +10,13 @@ import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.Constants;
 
 import cpw.mods.fml.common.registry.GameRegistry;
+import gcewing.architecture.common.tile.TileArchitecture;
+import gcewing.architecture.common.tile.TileShape;
 import portablejim.bbw.BetterBuildersWandsMod;
 import portablejim.bbw.basics.Point3d;
 import portablejim.bbw.core.items.IWandItem;
@@ -49,7 +52,18 @@ public class OopsCommand extends CommandBase {
                         GameRegistry.UniqueIdentifier lastBlock = new GameRegistry.UniqueIdentifier(
                                 bbwCompound.getString("lastBlock"));
                         int damageValue = bbwCompound.getInteger("lastDamage");
-                        ItemStack itemStack = GameRegistry.findItemStack(lastBlock.modId, lastBlock.name, 1);
+                        ItemStack itemStack;
+                        if (lastBlock.modId.equals("ArchitectureCraft")) {
+                            NBTTagCompound tileTag = bbwCompound.getCompoundTag("lastTile");
+                            TileEntity aTileEntity = TileEntity.createAndLoadEntity(tileTag);
+                            TileShape shapeTile = ((TileShape) aTileEntity);
+                            itemStack = TileArchitecture.blockStackWithTileEntity(
+                                    GameRegistry.findBlock(lastBlock.modId, lastBlock.name),
+                                    1,
+                                    shapeTile);
+                        } else {
+                            itemStack = GameRegistry.findItemStack(lastBlock.modId, lastBlock.name, 1);
+                        }
                         itemStack.setItemDamage(damageValue);
                         Block block = Block.getBlockFromItem(itemStack.getItem());
                         World world = player.worldObj;
